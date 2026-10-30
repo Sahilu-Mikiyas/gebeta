@@ -4,8 +4,9 @@ services:
   - type: web
     name: gebeta
     runtime: node
-    buildCommand: npm ci && npm run build && npx prisma migrate deploy
-    startCommand: npm start
+    buildCommand: npm ci && npm run build
+    # Apply database migrations on start, so a build never needs database access.
+    startCommand: npx prisma migrate deploy && npm start
     healthCheckPath: /login
     envVars:
       - key: NODE_VERSION
