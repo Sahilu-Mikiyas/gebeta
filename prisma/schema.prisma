@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Owner {
+  id           String   @id @default(cuid())
+  phone        String   @unique // E.164, e.g. +251911234567
+  name         String
+  passwordHash String
+  createdAt    DateTime @default(now())
+  cafes        Cafe[]
+}
+
+model Cafe {
+  id         String     @id @default(cuid())
+  ownerId    String
+  owner      Owner      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  slug       String     @unique
+  nameEn     String
+  nameAm     String     @default("")
+  area       String     @default("")
+  hoursEn    String     @default("")
+  hoursAm    String     @default("")
+  template   String     @default("wood")
+  logoId     String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  categories Category[]
+  items      Item[]
+  images     Image[]
+  scans      Scan[]
+
+  @@index([ownerId])
+}
+
+model Category {
+  id       String @id @default(cuid())
+  cafeId   String
+  cafe     Cafe   @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  nameEn   String
+  nameAm   String @default("")
+  position Int
+  items    Item[]
+
+  @@index([cafeId, position])
+}
+
+model Item {
+  id           String    @id @default(cuid())
+  cafeId       String
+  cafe         Cafe      @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  categoryId   String
+  category     Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  nameEn       String
+  nameAm       String    @default("")
+  descEn       String    @default("")
+  descAm       String    @default("")
+  price        Int // whole birr
+  fasting      Boolean   @default(false)
+  // Sold out until this moment (next 6:00 AM Addis time). Null means available.
+  soldOutUntil DateTime?
+  imageId      String?
+  position     Int
+
+  @@index([categoryId, position])
+}
+
+// Small compressed photos (WebP/JPEG, under 600 KB) stored in Postgres for the first version.
+model Image {
+  id        String   @id @default(cuid())
+  cafeId    String
+  cafe      Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  mime      String
+  data      Bytes
+  createdAt DateTime @default(now())
+
+  @@index([cafeId])
+}
+
+model Scan {
+  id     String   @id @default(cuid())
+  cafeId String
+  cafe   Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  at     DateTime @default(now())
+  lang   String
+
+  @@index([cafeId, at])
+}

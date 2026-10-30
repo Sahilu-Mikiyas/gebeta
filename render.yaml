@@ -1,0 +1,22 @@
+# Render Blueprint: one Node web service plus a Postgres database.
+# Set APP_URL after the first deploy (the public address, used inside QR codes).
+services:
+  - type: web
+    name: gebeta
+    runtime: node
+    buildCommand: npm ci && npm run build && npx prisma migrate deploy
+    startCommand: npm start
+    healthCheckPath: /login
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gebeta-db
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: APP_URL
+        sync: false
+databases:
+  - name: gebeta-db

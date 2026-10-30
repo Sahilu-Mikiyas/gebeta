@@ -1,0 +1,1358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gebeta Digital Menus</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700;800&family=Kaushan+Script&family=Noto+Sans+Ethiopic:wght@400;600;800;900&display=swap">
+<style>
+/* Layout: the site is built like a cafe menu board. Charred wood, brick and paper surfaces; flat ketchup red, mustard and fasting green; condensed poster type, dotted price leaders, stickers, hard print shadows. No gradients. */
+:root{
+  --char:#121010;      /* page ground */
+  --ink:#0b0a0a;
+  --paper:#fbf6ec;     /* print-menu paper */
+  --chalk:#f7f1e8;     /* text on dark */
+  --smoke:#b9aea1;     /* muted on dark */
+  --red:#d7261e;       /* ketchup red */
+  --mustard:#f5b700;
+  --green:#1f6b35;     /* fasting board */
+  --orange:#f26a1b;
+  --tg:#2aabee;
+  --hard:5px 5px 0 #000;
+  --poster:'Anton','Noto Sans Ethiopic','Impact','Haettenschweiler','Arial Narrow Bold',sans-serif;
+  --cond:'Barlow Condensed','Noto Sans Ethiopic','Arial Narrow',sans-serif;
+  --body:'Barlow','Noto Sans Ethiopic','Helvetica Neue',Arial,sans-serif;
+  --script:'Kaushan Script','Noto Sans Ethiopic','Brush Script MT',cursive;
+  --ge:'Noto Sans Ethiopic','Nyala','Abyssinica SIL',sans-serif;
+  --gl:max(16px, env(safe-area-inset-left, 0px));
+  --gr:max(16px, env(safe-area-inset-right, 0px));
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--char);color:var(--chalk);font-family:var(--body);font-size:16px;line-height:1.5;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:90;background:var(--ink)}
+img{display:block;max-width:100%}
+.ge{font-family:var(--ge)}
+:focus-visible{outline:3px solid var(--mustard);outline-offset:3px}
+.wrap{max-width:1240px;margin:0 auto;padding-left:var(--gl);padding-right:var(--gr)}
+section{position:relative}
+h1,h2,h3{margin:0;font-weight:400;text-wrap:balance}
+p{margin:0}
+.wood{background:#1a1210 url(img/wood.webp) center/cover}
+.brick{background:#6b2c18 url(img/brick.webp) center/cover}
+
+/* shared bits */
+.pill{display:inline-flex;align-items:center;gap:.5em;background:var(--red);color:#fff;font:400 1.6rem/1 var(--poster);text-transform:uppercase;letter-spacing:.02em;padding:.45em 1.1em .4em;border-radius:999px}
+.pill .ge{font-weight:800;font-size:.8em}
+.label{display:inline-block;background:var(--mustard);color:var(--ink);font:700 .82rem/1 var(--cond);letter-spacing:.12em;text-transform:uppercase;padding:.55em .9em}
+.script{font-family:var(--script);font-weight:400}
+.sec-title{font:400 clamp(2.6rem,6.4vw,5.6rem)/.92 var(--poster);text-transform:uppercase;letter-spacing:.005em}
+.sec-sub{font-size:1.08rem;max-width:58ch}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6em;font:700 1.15rem/1 var(--cond);letter-spacing:.06em;text-transform:uppercase;padding:1em 1.5em;border:3px solid #000;cursor:pointer;text-decoration:none;transition:transform .15s, box-shadow .15s;box-shadow:var(--hard)}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #000}
+.btn:active{transform:translate(3px,3px);box-shadow:2px 2px 0 #000}
+.btn-red{background:var(--red);color:#fff}
+.btn-mustard{background:var(--mustard);color:var(--ink)}
+.btn-paper{background:var(--paper);color:var(--ink)}
+.burst{position:absolute;display:grid;place-items:center;text-align:center;line-height:.95;z-index:5}
+.burst svg{position:absolute;inset:0;width:100%;height:100%;z-index:-1;overflow:visible}
+.burst > span{position:relative}
+.leader{display:flex;align-items:baseline;gap:.35em}
+.leader .dots{flex:1;min-width:1em;border-bottom:.14em dotted currentColor;opacity:.75;transform:translateY(-.22em)}
+.price{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* ---------- announcement + nav ---------- */
+.announce{background:var(--mustard);color:var(--ink);overflow:hidden;font:700 .85rem/1 var(--cond);letter-spacing:.14em;text-transform:uppercase;padding-block:9px}
+.announce .track{display:flex;gap:48px;width:max-content;animation:marq 38s linear infinite;white-space:nowrap}
+.announce .ge{letter-spacing:0;font-weight:800}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:80;background:var(--ink);border-bottom:3px solid #000}
+nav .wrap{display:flex;align-items:center;gap:28px;height:64px}
+.logo{position:relative;align-self:flex-start;height:92px;width:150px;background:var(--red);border-radius:0 0 75px 75px;display:grid;place-items:center;align-content:center;text-decoration:none;color:#fff;box-shadow:var(--hard);border:3px solid #000;border-top:0;flex-shrink:0;transition:transform .25s}
+.logo:hover{transform:translateY(4px) rotate(-2deg)}
+.logo b{font:400 1.9rem/1 var(--poster);letter-spacing:.04em}
+.logo span{font:800 .95rem/1.2 var(--ge);color:var(--mustard)}
+.nav-links{display:flex;gap:26px;margin-left:auto;font:700 1rem/1 var(--cond);letter-spacing:.1em;text-transform:uppercase}
+.nav-links a{color:var(--chalk);text-decoration:none;padding-block:6px;border-bottom:3px solid transparent}
+.nav-links a:hover{border-color:var(--mustard)}
+nav .btn{padding:.65em 1.1em;font-size:1rem;box-shadow:3px 3px 0 #000}
+.langsw{display:inline-flex;border:3px solid #000;box-shadow:3px 3px 0 #000;flex-shrink:0}
+.langsw button{font:700 .95rem/1 var(--cond);letter-spacing:.06em;background:var(--chalk);color:var(--ink);border:0;padding:.6em .8em;cursor:pointer}
+.langsw button+button{border-left:3px solid #000;font-family:var(--ge);font-weight:800}
+.langsw button[aria-pressed="true"]{background:var(--red);color:#fff}
+
+/* ---------- hero ---------- */
+.hero{overflow:hidden;border-bottom:4px solid #000}
+.hero::before{content:"";position:absolute;inset:0;background:rgba(10,8,7,.38)}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;padding-block:64px 84px;min-height:640px}
+.hero-copy{display:grid;gap:22px;min-width:0;justify-items:start}
+.hero h1{font:400 clamp(3.6rem,8.6vw,8.2rem)/.86 var(--poster);text-transform:uppercase;position:relative}
+.hero h1 .w{display:block}
+.hero h1 .mus{color:var(--mustard)}
+.hero h1 .scr{position:absolute;right:-.2em;bottom:-.55em;font:400 .42em/1 var(--script);color:#fff;text-transform:none;transform:rotate(-8deg);text-shadow:4px 4px 0 var(--red);white-space:nowrap}
+.hero .am{font:800 clamp(1.15rem,2vw,1.5rem)/1.3 var(--ge);color:var(--chalk);margin-top:1.4em}
+.hero .lede{font-size:1.1rem;max-width:46ch;color:var(--chalk)}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:16px}
+.ticks{display:flex;flex-wrap:wrap;gap:8px 20px;font:700 .95rem/1 var(--cond);letter-spacing:.08em;text-transform:uppercase;color:var(--mustard)}
+.ticks span::before{content:"★";margin-right:.45em;color:var(--red)}
+
+.plate-stage{position:relative;height:600px;min-width:0}
+.disc{position:absolute;left:50%;top:50%;width:520px;height:520px;max-width:94%;aspect-ratio:1;margin:-260px 0 0 -260px;border-radius:50%;background:var(--red);border:4px solid #000;box-shadow:10px 10px 0 #000}
+.layer{position:absolute;will-change:transform;transition:transform .25s ease-out}
+.platter{left:50%;top:50%;width:470px;margin:-235px 0 0 -235px;animation:spin 60s linear infinite}
+.platter img{filter:drop-shadow(0 18px 18px rgba(0,0,0,.55))}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spris{left:-2%;bottom:0;width:190px;z-index:4}
+.spris img{filter:drop-shadow(10px 14px 10px rgba(0,0,0,.5));animation:bob 5s ease-in-out infinite}
+.beans{right:-3%;top:-2%;width:170px;z-index:1;opacity:.95}
+.tibs-h{right:-4%;bottom:-2%;width:230px;z-index:4}
+.tibs-h img{filter:drop-shadow(8px 14px 12px rgba(0,0,0,.55))}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(-1deg)}}
+.b-fast{left:2%;top:6%;width:150px;height:150px;color:var(--ink);font-family:var(--poster);text-transform:uppercase;animation:wob 4s ease-in-out infinite}
+.b-fast small{display:block;font:800 .95rem/1 var(--ge)}
+.b-fast b{display:block;font-weight:400;font-size:2.4rem}
+.b-fast i{font-style:normal;font-size:1rem;letter-spacing:.06em}
+@keyframes wob{0%,100%{transform:rotate(-10deg) scale(1)}50%{transform:rotate(-4deg) scale(1.05)}}
+.scanme{position:absolute;right:6%;top:4%;z-index:6;color:#fff;font:400 1.9rem/1 var(--script);transform:rotate(8deg);text-shadow:3px 3px 0 #000}
+.scanme svg{display:block;margin:4px 0 0 30px;width:90px;height:70px;overflow:visible}
+.scanme path{fill:none;stroke:#fff;stroke-width:4;stroke-linecap:round;stroke-dasharray:180;stroke-dashoffset:180;animation:draw 1.2s 1.2s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.steam{position:absolute;right:13%;bottom:190px;width:90px;height:140px;z-index:3;overflow:visible;pointer-events:none}
+.steam path{fill:none;stroke:rgba(255,255,255,.55);stroke-width:7;stroke-linecap:round;filter:blur(4px);animation:steam 3.6s ease-in-out infinite;opacity:0}
+.steam path:nth-child(2){animation-delay:1.2s}.steam path:nth-child(3){animation-delay:2.4s}
+@keyframes steam{0%{opacity:0;transform:translateY(30px) scaleY(.7)}35%{opacity:1}100%{opacity:0;transform:translateY(-40px) scaleY(1.15)}}
+
+/* load sequence */
+.slam{animation:slam .7s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes slam{from{opacity:0;transform:scale(1.5) rotate(-4deg)}}
+.d1{animation-delay:.1s}.d2{animation-delay:.22s}.d3{animation-delay:.34s}.d4{animation-delay:.5s}.d5{animation-delay:.66s}.d6{animation-delay:.8s}
+.pop{animation:pop .6s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.2) rotate(-30deg)}}
+.rise{animation:rise .8s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(40px)}}
+
+/* ---------- tapes ---------- */
+.tapes{position:relative;height:150px;overflow:hidden;background:var(--char);border-bottom:4px solid #000}
+.tape{position:absolute;left:-5%;right:-5%;top:50%;border-block:3px solid #000;overflow:hidden;padding-block:14px}
+.tape .track{display:flex;gap:38px;width:max-content;white-space:nowrap;font:400 1.75rem/1 var(--poster);text-transform:uppercase;letter-spacing:.02em}
+.tape .track span{display:flex;gap:14px;align-items:baseline}
+.tape .track em{font-style:normal;font:800 1.2rem/1 var(--ge)}
+.tape .track b{font-weight:400;font-family:var(--cond);font-weight:800}
+.tape.t1{background:var(--red);color:#fff;top:38%;transform:translateY(-50%) rotate(-3deg)}
+.tape.t1 .track{animation:marq 46s linear infinite}
+.tape.t2{background:var(--mustard);color:var(--ink);top:64%;transform:translateY(-50%) rotate(2.5deg);z-index:1}
+.tape.t2 .track{animation:marq 52s linear infinite reverse}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* ---------- live board (TV) ---------- */
+.live{padding-block:80px 90px;overflow:hidden}
+.live::before{content:"";position:absolute;inset:0;background:rgba(15,8,5,.42)}
+.live .wrap{position:relative;display:grid;gap:40px}
+.live-head{display:grid;gap:14px;justify-items:start}
+.live-head .sec-title{background:var(--ink);padding:.12em .3em .06em;box-shadow:var(--hard);color:#fff}
+.live-head .sec-title .mus{color:var(--mustard)}
+.live-head .sec-sub{background:var(--ink);padding:.6em .9em;color:var(--chalk)}
+.tv-area{position:relative;padding-top:70px}
+.mount{position:absolute;top:0;width:14px;height:74px;background:#1a1a1a;border:2px solid #000}
+.mount::before{content:"";position:absolute;top:-4px;left:-16px;width:42px;height:10px;background:#1a1a1a;border:2px solid #000}
+.mount.l{left:24%}.mount.r{right:24%}
+.bulb{position:absolute;top:-80px;left:6%;width:4px;height:150px;background:#000;z-index:3}
+.bulb::after{content:"";position:absolute;bottom:-34px;left:-15px;width:34px;height:42px;border-radius:50% 50% 46% 46%;background:#ffd27a;box-shadow:0 0 40px 14px rgba(255,190,90,.55),0 0 120px 40px rgba(255,170,60,.25);animation:flicker 6s infinite}
+@keyframes flicker{0%,100%,48%,52%{opacity:1}50%{opacity:.75}}
+.tv{position:relative;background:#050505;border:4px solid #000;border-radius:10px;padding:12px;box-shadow:16px 16px 0 rgba(0,0,0,.65)}
+.tv::after{content:"";position:absolute;right:16px;bottom:3px;width:6px;height:6px;border-radius:50%;background:#3fdc6a}
+.screen-tv{position:relative;aspect-ratio:16/9;overflow:hidden;container-type:inline-size;background:#000}
+.slide{position:absolute;inset:0;visibility:hidden}
+.slide.on{visibility:visible}
+.wipe{position:absolute;inset:0;z-index:20;pointer-events:none;display:flex;transform:translateX(-101%)}
+.wipe i{flex:1}
+.wipe i:nth-child(1){background:var(--red)}.wipe i:nth-child(2){background:var(--mustard)}.wipe i:nth-child(3){background:#000}
+.wipe.go{animation:wipe 1.1s cubic-bezier(.7,0,.3,1) forwards}
+@keyframes wipe{0%{transform:translateX(-101%)}45%,55%{transform:translateX(0)}100%{transform:translateX(101%)}}
+
+/* slide A: wood breakfast board */
+.sA{background:#1a1210 url(img/wood.webp) center/cover;color:#fff;display:grid;grid-template-columns:46cqw 1fr;padding:3.2cqw 3.4cqw}
+.sA .col{display:grid;align-content:start;gap:1.1cqw}
+.sA .pill{font-size:3cqw;padding:.5cqw 2.6cqw .4cqw;justify-self:start;border:.25cqw solid #000;box-shadow:.5cqw .5cqw 0 #000}
+.sA .it{display:grid;gap:.15cqw}
+.sA .it .leader{font:800 2.05cqw/1.05 var(--cond);text-transform:uppercase;letter-spacing:.02em}
+.sA .it p{font:500 1.22cqw/1.25 var(--body);color:#e6ddd2}
+.sA .it .price{position:relative}
+.sA .it .old{position:absolute;right:0;bottom:100%;font-size:1.5cqw;color:var(--mustard);text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:.25cqw;opacity:0}
+.sA .it.changed .old{animation:oldp 2.6s ease forwards}
+.sA .it.changed .now{animation:newp .7s cubic-bezier(.2,1.6,.4,1)}
+@keyframes oldp{0%{opacity:1;transform:none}70%{opacity:1}100%{opacity:0;transform:translateY(-1cqw)}}
+@keyframes newp{from{transform:scale(2);color:var(--mustard)}}
+.sA .it.out .leader span:first-child{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:.3cqw}
+.sA .it.out .price .now{color:var(--red)}
+.sA .right{position:relative}
+.sA .tab{position:absolute;left:50%;top:-3.2cqw;transform:translateX(-50%);width:27cqw;height:23cqw;background:var(--red);border-radius:0 0 13.5cqw 13.5cqw;display:grid;place-items:center;align-content:center;border:.3cqw solid #000;border-top:0}
+.sA .tab small{font:700 1.1cqw/1 var(--cond);letter-spacing:.3em;text-transform:uppercase}
+.sA .tab b{font:400 6.4cqw/1 var(--poster);letter-spacing:.03em}
+.sA .tab span{font:400 2.2cqw/1 var(--script);color:var(--mustard)}
+.sA .tab em{font-style:normal;font:800 1.1cqw/1.6 var(--ge)}
+.sA .food{position:absolute;right:-3cqw;bottom:-5cqw;width:33cqw;transform:rotate(-8deg);filter:drop-shadow(1cqw 1.4cqw 1cqw rgba(0,0,0,.6))}
+.sA .spec{position:absolute;left:2cqw;bottom:2cqw;background:var(--red);color:#fff;font:400 2.2cqw/1 var(--poster);padding:.9cqw 1.8cqw .8cqw;border-radius:999px;border:.25cqw solid #000;text-transform:uppercase}
+
+/* slide B: fasting green board */
+.sB{background:var(--green);color:#fff;display:grid;grid-template-columns:44cqw 1fr;align-items:center;padding:3cqw 4cqw;gap:3cqw}
+.sB::before{content:"";position:absolute;inset:1.4cqw;border:.4cqw solid var(--mustard);pointer-events:none}
+.sB .plate{width:40cqw;animation:spin 50s linear infinite;filter:drop-shadow(.8cqw 1.2cqw .8cqw rgba(0,0,0,.45))}
+.sB h4{margin:0;font:900 6.2cqw/1.05 var(--ge);color:var(--mustard)}
+.sB h5{margin:0 0 1.6cqw;font:400 3cqw/1 var(--poster);letter-spacing:.06em;text-transform:uppercase}
+.sB .leader{font:800 2.2cqw/1.75 var(--cond);text-transform:uppercase}
+.sB .leader .ge{font:600 1.5cqw/1 var(--ge);color:#cfe5d3;margin-left:.6cqw}
+.sB .foot{margin-top:1.4cqw;font:400 2.5cqw/1 var(--script);color:var(--mustard)}
+
+/* slide C: tibs tuesday mustard board */
+.sC{background:var(--mustard);color:var(--ink);overflow:hidden}
+.sC .big{position:absolute;left:4cqw;top:3cqw;font:400 19cqw/.82 var(--poster);text-transform:uppercase}
+.sC .big span{display:block;font-size:10.4cqw;color:transparent;-webkit-text-stroke:.35cqw var(--ink)}
+.sC .sizz{position:absolute;left:20cqw;top:23cqw;font:400 7cqw/1 var(--script);color:var(--red);transform:rotate(-9deg);text-shadow:.35cqw .35cqw 0 #000}
+.sC .food{position:absolute;right:3cqw;top:5cqw;width:41cqw;filter:drop-shadow(1cqw 1.2cqw .8cqw rgba(0,0,0,.35))}
+.sC .burst{right:36cqw;top:6cqw;width:15cqw;height:15cqw;color:#fff;font:400 1.6cqw/1 var(--poster);text-transform:uppercase;animation:wob 3s ease-in-out infinite}
+.sC .burst b{display:block;font-weight:400;font-size:4.2cqw}
+.sC .band{position:absolute;left:0;right:0;bottom:0;background:var(--ink);color:var(--mustard);font:700 2cqw/1 var(--cond);letter-spacing:.16em;text-transform:uppercase;padding:1.6cqw 4cqw;display:flex;justify-content:space-between;gap:2cqw}
+.sC .band .ge{letter-spacing:0;font-weight:800;color:#fff}
+
+.tv-controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;margin-top:30px}
+.tv-controls .btn{font-size:1rem;padding:.8em 1.2em}
+.dots-nav{display:flex;gap:8px;margin-left:8px}
+.dots-nav button{width:16px;height:16px;border:3px solid #000;background:var(--chalk);cursor:pointer;padding:0}
+.dots-nav button[aria-pressed="true"]{background:var(--mustard)}
+.sync{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:18px}
+.sync span{background:var(--ink);color:var(--chalk);font:700 .85rem/1 var(--cond);letter-spacing:.12em;text-transform:uppercase;padding:.6em .9em;border:2px solid #000}
+.sync span b{color:#3fdc6a;margin-right:.4em}
+
+/* ---------- builder (paper section) ---------- */
+.paper{background:var(--paper);color:var(--ink)}
+.builder-sec{padding-block:90px;border-block:4px solid #000}
+.builder-head{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;margin-bottom:48px}
+.builder-head .sec-title .red{color:var(--red)}
+.builder-head .script{font-size:2.2rem;color:var(--orange);transform:rotate(-6deg);display:inline-block}
+.builder{display:grid;grid-template-columns:1fr 340px;gap:48px;align-items:start}
+.controls{display:grid;gap:22px;min-width:0}
+.box{border:3px solid #000;background:#fff;box-shadow:var(--hard);padding:22px;display:grid;gap:16px;min-width:0}
+.box-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.box-h h3{font:400 1.7rem/1 var(--poster);text-transform:uppercase}
+.box-h .step{font:700 .8rem/1 var(--cond);letter-spacing:.14em;text-transform:uppercase;background:var(--ink);color:var(--mustard);padding:.5em .7em}
+.f{display:grid;gap:6px;font:700 .8rem/1 var(--cond);letter-spacing:.12em;text-transform:uppercase;min-width:0}
+input[type=text],input[type=number],input[type=tel],select{font:600 1.05rem var(--body);color:var(--ink);background:#fff;border:3px solid #000;padding:11px 12px;width:100%;min-width:0;border-radius:0}
+input:focus,select:focus{outline:none;background:#fff8dc}
+.slug{font:600 .9rem var(--cond);letter-spacing:.04em;overflow-wrap:anywhere}
+.slug b{background:var(--mustard);padding:.1em .4em}
+.tpls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.tpl{border:3px solid #000;padding:0;cursor:pointer;background:#fff;display:grid;text-align:left;font:700 .85rem/1.1 var(--cond);letter-spacing:.08em;text-transform:uppercase;color:var(--ink);transition:transform .15s, box-shadow .15s}
+.tpl:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 #000}
+.tpl[aria-pressed="true"]{box-shadow:5px 5px 0 var(--red);transform:translate(-2px,-2px)}
+.tpl .sw{height:74px;position:relative;overflow:hidden;border-bottom:3px solid #000}
+.tpl .sw i{position:absolute;left:8px;top:10px;height:12px;width:54%;border-radius:99px}
+.tpl .sw u{position:absolute;left:8px;right:8px;top:32px;height:0;border-bottom:3px dotted;opacity:.8}
+.tpl .sw u+u{top:46px}
+.tpl .sw img{position:absolute;right:-8px;bottom:-10px;width:52px}
+.tpl span{padding:9px 10px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:3px solid #000}
+.seg button{font:700 .95rem/1 var(--cond);letter-spacing:.08em;text-transform:uppercase;background:#fff;color:var(--ink);border:0;padding:.75em 1.1em;cursor:pointer}
+.seg button+button{border-left:3px solid #000}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--mustard)}
+.seg .ge{letter-spacing:0;font-weight:800}
+.check{display:inline-flex;align-items:center;gap:10px;font:700 .95rem/1 var(--cond);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.check input{appearance:none;width:24px;height:24px;border:3px solid #000;background:#fff;margin:0;cursor:pointer;display:grid;place-items:center;flex-shrink:0}
+.check input:checked{background:var(--green)}
+.check input:checked::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.check .ge{letter-spacing:0;font-weight:800}
+.items{display:grid;border:3px solid #000}
+.irow{display:grid;grid-template-columns:minmax(0,1fr) 96px auto auto;gap:12px;align-items:center;padding:10px 12px;background:#fff}
+.irow+.irow{border-top:2px dashed #000}
+.irow .nm{min-width:0}
+.irow .nm b{display:block;font:800 1.05rem/1.1 var(--cond);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.irow .nm small{font:600 .82rem/1.2 var(--ge);color:#5c534b}
+.irow input[type=number]{padding:7px 8px;font:700 1rem var(--cond);text-align:right;border-width:2px}
+.irow .check{font-size:.75rem;gap:6px}
+.irow .check input{width:20px;height:20px;border-width:2px}
+.irow .check.out input:checked{background:var(--red)}
+.btn-sm{font:700 .9rem/1 var(--cond);letter-spacing:.08em;text-transform:uppercase;padding:.75em 1em;border:3px solid #000;background:#fff;color:var(--ink);cursor:pointer;box-shadow:3px 3px 0 #000;transition:transform .12s, box-shadow .12s}
+.btn-sm:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 #000}
+.btn-sm:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
+.btn-sm.red{background:var(--red);color:#fff}
+.btn-sm.mus{background:var(--mustard)}
+.addrow{display:grid;grid-template-columns:1.4fr .7fr 1fr auto;gap:10px;align-items:end}
+.preview-col{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px);display:grid;gap:14px;justify-items:center}
+.hint{font:700 .8rem/1.3 var(--cond);letter-spacing:.12em;text-transform:uppercase;text-align:center}
+
+/* phone */
+.phone{width:320px;max-width:100%;aspect-ratio:9/19;background:#0a0a0a;border:3px solid #000;border-radius:46px;padding:10px;box-shadow:10px 10px 0 #000;position:relative;flex-shrink:0}
+.phone .notch{position:absolute;top:16px;left:50%;transform:translateX(-50%);width:86px;height:24px;background:#0a0a0a;border-radius:20px;z-index:5}
+.pscreen{height:100%;border-radius:36px;overflow:hidden auto;scrollbar-width:none;position:relative}
+.pscreen::-webkit-scrollbar{display:none}
+.pm{--bg:#1a1210;--ink:#fff;--pill:var(--red);--pillInk:#fff;--acc:var(--mustard);--mut:#d8cfc4;--rule:#fff;min-height:100%;background:var(--bg);color:var(--ink);padding:0 16px 26px;font-family:var(--body);transition:background-color .4s}
+.pm[data-t="wood"]{background:#1a1210 url(img/wood.webp) center/cover}
+.pm[data-t="mustard"]{--bg:var(--mustard);--ink:#0b0a0a;--pill:#0b0a0a;--pillInk:var(--mustard);--acc:var(--red);--mut:#4b3a00}
+.pm[data-t="paper"]{--bg:var(--paper);--ink:#1a1a1a;--pill:var(--orange);--pillInk:#fff;--acc:var(--orange);--mut:#6b625a}
+.pm[data-t="green"]{--bg:var(--green);--ink:#fff;--pill:var(--mustard);--pillInk:#0b0a0a;--acc:var(--mustard);--mut:#cfe5d3}
+.pm.flip{animation:flip .55s cubic-bezier(.3,1.3,.5,1)}
+@keyframes flip{from{transform:perspective(700px) rotateY(-70deg);opacity:.3}}
+.pm-tab{margin:0 auto;width:170px;padding:44px 0 18px;background:var(--pill);color:var(--pillInk);border-radius:0 0 85px 85px;display:grid;place-items:center;text-align:center;gap:2px}
+.pm-tab small{font:700 9px/1 var(--cond);letter-spacing:.3em;text-transform:uppercase}
+.pm-tab b{font:400 30px/1 var(--poster);text-transform:uppercase;letter-spacing:.03em;max-width:150px;overflow-wrap:anywhere}
+.pm-tab span{font:400 15px/1 var(--script);max-width:150px}
+.pm-hero{position:relative;height:150px;margin-top:-10px}
+.pm-hero img{position:absolute;right:-14px;bottom:0;height:150px;width:auto;max-width:none;filter:drop-shadow(4px 8px 6px rgba(0,0,0,.45))}
+.pm-hero .tagp{position:absolute;left:0;bottom:16px;background:var(--acc);color:var(--bg);font:400 15px/1 var(--poster);text-transform:uppercase;padding:8px 12px 7px;border-radius:99px;max-width:58%}
+.pm[data-t="wood"] .pm-hero .tagp{color:#0b0a0a}
+.pm[data-t="mustard"] .pm-hero .tagp{color:#fff}
+.pm-chips{display:flex;gap:6px;margin:10px 0 6px}
+.pm-chip{font:700 11px/1 var(--cond);letter-spacing:.1em;text-transform:uppercase;padding:7px 10px;border:2px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+.pm-chip.on{background:var(--ink);color:var(--bg)}
+.pm[data-t="wood"] .pm-chip.on{color:#1a1210}
+.pm-pill{display:inline-block;margin:14px 0 6px;background:var(--pill);color:var(--pillInk);font:400 16px/1 var(--poster);text-transform:uppercase;letter-spacing:.03em;padding:8px 16px 7px;border-radius:99px}
+.pm-pill .ge{font-weight:800;font-size:13px}
+.pm-it{padding:6px 0}
+.pm-it .leader{font:800 14px/1.1 var(--cond);text-transform:uppercase;letter-spacing:.02em}
+.pm-it .leader .nm{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.pm[data-lang="am"] .pm-it .leader{font-family:var(--ge);font-weight:800;font-size:13px}
+.pm-it p{font-size:11px;line-height:1.3;color:var(--mut);margin-top:2px;max-width:85%}
+.pm[data-lang="am"] .pm-it p{font-family:var(--ge)}
+.pm-it .price{font-family:var(--cond);font-weight:800}
+.pm-it.out{opacity:.5}
+.pm-it.out .nm > span:first-child{text-decoration:line-through;text-decoration-thickness:2px}
+.pm-it.flash .price{animation:pflash 1.5s ease}
+@keyframes pflash{0%,100%{background:transparent}15%,65%{background:var(--acc);color:var(--bg)}}
+.tg{font:800 8.5px/1 var(--cond);letter-spacing:.08em;text-transform:uppercase;padding:3px 5px;border:1.5px solid currentColor}
+.tg.fast{color:#43c46b}
+.pm[data-t="green"] .tg.fast{color:var(--mustard)}
+.pm[data-t="mustard"] .tg.fast,.pm[data-t="paper"] .tg.fast{color:var(--green)}
+.tg.out{color:var(--red);background:#fff;border-color:var(--red)}
+.pm-foot{margin-top:18px;padding-top:10px;border-top:2px dotted var(--ink);font:600 10px/1.4 var(--cond);letter-spacing:.1em;text-transform:uppercase;text-align:center;color:var(--mut)}
+
+/* ---------- hardware ---------- */
+.hw{padding-block:90px;border-bottom:4px solid #000}
+.hw::before{content:"";position:absolute;inset:0;background:rgba(10,8,7,.3)}
+.hw .wrap{position:relative}
+.hw-head{display:grid;gap:14px;margin-bottom:44px;justify-items:start}
+.hw-head .sec-title .mus{color:var(--mustard)}
+.products{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:44px}
+.prod{border:3px solid #000;box-shadow:var(--hard);cursor:pointer;padding:0;text-align:left;color:var(--ink);display:grid;grid-template-rows:230px auto;font:inherit;transition:transform .15s, box-shadow .15s;min-width:0}
+.prod:hover{transform:translate(-3px,-3px);box-shadow:8px 8px 0 #000}
+.prod[aria-pressed="true"]{transform:translate(-3px,-3px);box-shadow:8px 8px 0 var(--chalk)}
+.prod .stage{position:relative;display:grid;place-items:end center;padding-bottom:22px;overflow:hidden;border-bottom:3px solid #000}
+.prod .meta{background:var(--paper);padding:14px 16px;display:grid;gap:4px}
+.prod .meta b{font:400 1.35rem/1 var(--poster);text-transform:uppercase}
+.prod .meta small{font:500 .88rem/1.3 var(--body);color:#4d453e}
+.prod .meta .pr{font:800 1.15rem/1 var(--cond);color:var(--red);margin-top:4px}
+.prod.p-acr .stage{background:var(--tg)}
+.prod.p-wood .stage{background:var(--mustard)}
+.prod.p-led .stage{background:#111}
+.prod.p-tv .stage{background:var(--red)}
+.check-badge{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;background:var(--mustard);border:3px solid #000;display:none;place-items:center;z-index:3}
+.check-badge::after{content:"";width:8px;height:14px;border:solid #000;border-width:0 4px 4px 0;transform:rotate(45deg) translate(-1px,-2px)}
+.prod[aria-pressed="true"] .check-badge{display:grid}
+
+/* stand drawings */
+.stand{--led:#ffb547;position:relative;display:flex;flex-direction:column;align-items:center}
+.stand .panel{width:110px;height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px;text-align:center;position:relative}
+.stand canvas{width:66px;height:66px;image-rendering:pixelated;background:#fff;display:block}
+.stand .pn{font:400 12px/1 var(--poster);text-transform:uppercase;letter-spacing:.03em;max-width:100%;overflow-wrap:anywhere}
+.stand .ps{font:700 7px/1 var(--cond);letter-spacing:.16em;text-transform:uppercase}
+.stand .pa{font:800 7.5px/1 var(--ge)}
+.stand[data-kind="acrylic"] .panel{background:rgba(255,255,255,.28);border:2px solid #fff;color:#000;border-radius:4px}
+.stand[data-kind="acrylic"] .panel::before{content:"";position:absolute;top:8px;left:8px;width:10px;height:70%;background:rgba(255,255,255,.5);transform:skewX(-8deg)}
+.stand[data-kind="acrylic"] .base{width:124px;height:12px;background:rgba(255,255,255,.55);border:2px solid #fff}
+.stand[data-kind="wood"] .panel{background:var(--paper);color:var(--ink);border:2px solid #000}
+.stand[data-kind="wood"] .base{width:104px;height:32px;margin-top:-12px;background:#b0753f url(img/wood.webp) center/320px;background-blend-mode:soft-light;border:2px solid #000;border-radius:4px}
+.stand[data-kind="led"] .panel{background:rgba(255,255,255,.05);border:2px solid var(--led);color:#fff;border-radius:6px;box-shadow:0 0 12px var(--led),0 0 36px -6px var(--led),inset 0 0 16px color-mix(in srgb,var(--led) 45%,transparent);animation:led 3s ease-in-out infinite}
+.stand[data-kind="led"] .pn{color:var(--led);text-shadow:0 0 8px var(--led)}
+.stand[data-kind="led"] .base{width:126px;height:18px;background:#222;border:2px solid #000;border-radius:3px;position:relative}
+.stand[data-kind="led"] .base::before{content:"";position:absolute;left:8px;right:8px;top:-2px;height:3px;background:var(--led);box-shadow:0 0 10px 2px var(--led)}
+@keyframes led{0%,100%{box-shadow:0 0 10px var(--led),0 0 30px -8px var(--led),inset 0 0 12px color-mix(in srgb,var(--led) 35%,transparent)}50%{box-shadow:0 0 18px var(--led),0 0 54px -4px var(--led),inset 0 0 22px color-mix(in srgb,var(--led) 55%,transparent)}}
+.mini-tv{width:88%;position:relative;margin-bottom:34px}
+.mini-tv .mt{background:#050505;border:3px solid #000;padding:5px;box-shadow:6px 6px 0 #000}
+.mini-tv .mt > div{aspect-ratio:16/9;container-type:inline-size;overflow:hidden;position:relative}
+.mini-tv .mt .slide{visibility:visible}
+.mini-tv::before,.mini-tv::after{content:"";position:absolute;top:-60px;width:8px;height:60px;background:#000}
+.mini-tv::before{left:28%}.mini-tv::after{right:28%}
+
+.config{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:start}
+.config .box{background:var(--paper);color:var(--ink)}
+.leds{display:flex;gap:12px}
+.leds button{width:38px;height:38px;border-radius:50%;border:3px solid #000;cursor:pointer}
+.leds button[aria-pressed="true"]{box-shadow:0 0 0 3px var(--paper),0 0 0 6px #000}
+input[type=range]{width:100%;accent-color:var(--red);height:28px}
+.qty-big{font:400 3.4rem/1 var(--poster)}
+.qty-big small{font:700 .95rem/1 var(--cond);letter-spacing:.12em;text-transform:uppercase;margin-left:.5em}
+.note{font:500 .9rem/1.4 var(--body);color:#4d453e}
+
+.receipt-wrap{position:relative;padding-top:18px}
+.slot{height:14px;background:#000;border:3px solid #000;border-radius:8px;margin:0 -10px;position:relative;z-index:2;box-shadow:0 4px 0 rgba(0,0,0,.4)}
+.receipt{background:#fffdf7;color:var(--ink);margin:-6px 18px 0;padding:26px 22px 40px;font:600 .98rem/1.4 var(--cond);letter-spacing:.04em;text-transform:uppercase;transform-origin:top}
+.receipt.print{animation:print .7s steps(9,end)}
+@keyframes print{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+.receipt h4{margin:0;text-align:center;font:400 2rem/1 var(--poster)}
+.receipt .c{text-align:center;font-size:.82rem;margin:6px 0 14px}
+.receipt hr{border:0;border-top:2px dashed #000;margin:12px 0}
+.receipt .ln{display:flex;justify-content:space-between;gap:12px}
+.receipt .ln span:last-child{font-variant-numeric:tabular-nums;white-space:nowrap}
+.receipt .tot{font:400 1.6rem/1.2 var(--poster)}
+.receipt .tot span:last-child{color:var(--red)}
+.receipt .bar{height:42px;margin-top:16px;background:repeating-linear-gradient(90deg,#000 0 2px,transparent 2px 4px,#000 4px 7px,transparent 7px 8px,#000 8px 9px,transparent 9px 12px)}
+.receipt .pay{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.receipt .pay b{border:2px solid #000;padding:.35em .6em;font-size:.82rem}
+
+/* ---------- features as a menu board ---------- */
+.feat-sec{padding-block:90px;border-bottom:4px solid #000}
+.board{position:relative;border:10px solid #000;box-shadow:14px 14px 0 rgba(0,0,0,.6);padding:52px 48px 56px;background:#1a1210 url(img/wood.webp) center/cover}
+.board-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:34px}
+.board-top .sec-title{color:#fff}
+.board-top .sec-title .mus{color:var(--mustard)}
+.board-top .script{color:var(--mustard);font-size:2.2rem;transform:rotate(-6deg);display:inline-block;margin-top:.4em}
+.feat-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px 64px}
+.feat-col{display:grid;gap:18px;align-content:start;min-width:0}
+.feat-col .pill{justify-self:start;border:3px solid #000;box-shadow:4px 4px 0 #000}
+.fi{display:grid;gap:4px;padding:6px 8px;margin:0 -8px;transition:background .2s}
+.fi:hover{background:rgba(245,183,0,.14)}
+.fi .leader{font:800 1.45rem/1.05 var(--cond);text-transform:uppercase;letter-spacing:.02em}
+.fi .leader .price{font-size:1rem;letter-spacing:.1em;color:var(--mustard)}
+.fi .leader .ge{font-weight:800;font-size:1.05rem;color:var(--mustard)}
+.fi p{color:#e2d8cc;font-size:.98rem;max-width:52ch}
+.fi code{font:700 .95em var(--cond);background:#000;color:var(--mustard);padding:.05em .4em}
+.board .deco-shiro{position:absolute;right:-50px;bottom:-60px;width:220px;transform:rotate(8deg);filter:drop-shadow(8px 14px 10px rgba(0,0,0,.6));z-index:2;pointer-events:none}
+.board .deco-burst{right:40px;top:-48px;width:130px;height:130px;color:var(--ink);font:400 1.05rem/1 var(--poster);text-transform:uppercase;transform:rotate(12deg)}
+.board .deco-burst b{display:block;font-weight:400;font-size:2rem}
+
+/* ---------- dashboard (mustard) ---------- */
+.dash-sec{background:var(--mustard);color:var(--ink);padding-block:90px;border-bottom:4px solid #000;overflow:hidden}
+.dash-head{display:grid;grid-template-columns:1fr auto;align-items:end;gap:20px;margin-bottom:44px}
+.dash-head .sec-title .w{color:#fff;-webkit-text-stroke:3px #000;paint-order:stroke fill}
+.dash-head img{width:200px;transform:rotate(10deg);filter:drop-shadow(8px 10px 0 rgba(0,0,0,.25))}
+.dash{display:grid;grid-template-columns:1.3fr 1fr;gap:24px}
+.dash .box{gap:18px}
+.ex{font:700 .72rem/1 var(--cond);letter-spacing:.14em;text-transform:uppercase;border:2px dashed #000;padding:.45em .6em}
+.bignum{font:400 4rem/1 var(--poster)}
+.bignum small{font:800 1rem/1 var(--cond);color:var(--green);margin-left:.4em;letter-spacing:.06em}
+.chart{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;align-items:end;height:200px;border-bottom:3px solid #000;position:relative}
+.chart .gl{position:absolute;left:0;right:0;border-top:1px dashed rgba(0,0,0,.25)}
+.cb{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%;position:relative;z-index:1}
+.cb span{font:800 .9rem/1 var(--cond);font-variant-numeric:tabular-nums}
+.cb i{display:block;width:100%;max-width:46px;background:var(--ink);transform-origin:bottom;animation:grow 1s cubic-bezier(.2,.9,.3,1.1) both}
+.cb.peak i{background:var(--red)}
+@keyframes grow{from{transform:scaleY(0)}}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;text-align:center;font:700 .8rem/1 var(--cond);letter-spacing:.1em;text-transform:uppercase;margin-top:8px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);border:3px solid #000}
+.kpis div{padding:12px;display:grid;gap:3px;min-width:0}
+.kpis div+div{border-left:3px solid #000}
+.kpis small{font:700 .72rem/1 var(--cond);letter-spacing:.12em;text-transform:uppercase}
+.kpis b{font:400 1.4rem/1 var(--poster);text-transform:uppercase}
+.chat{display:grid;gap:10px;min-height:190px;align-content:start}
+.msg{padding:10px 14px;max-width:88%;font-size:.95rem;line-height:1.35;border:2px solid #000;animation:rise .35s ease both}
+.msg.me{justify-self:end;background:var(--tg);color:#fff;font:700 .95rem/1.3 var(--cond);letter-spacing:.04em}
+.msg.bot{background:#f2f2f2}
+.msg.bot b{color:var(--red)}
+.typing{display:inline-flex;gap:4px}
+.typing i{width:7px;height:7px;border-radius:50%;background:#000;animation:blink 1.1s infinite}
+.typing i:nth-child(2){animation-delay:.18s}.typing i:nth-child(3){animation-delay:.36s}
+@keyframes blink{0%,100%{opacity:.2}50%{opacity:1}}
+.soldlist{display:grid;border:3px solid #000}
+.soldlist label{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;font:800 1rem/1.1 var(--cond);text-transform:uppercase;letter-spacing:.03em;cursor:pointer}
+.soldlist label+label{border-top:2px dashed #000}
+.soldlist .ge{font-weight:600;text-transform:none;color:#5c534b;font-size:.85rem;margin-left:6px}
+.swt{appearance:none;width:52px;height:28px;border:3px solid #000;background:#fff;position:relative;cursor:pointer;margin:0;flex-shrink:0}
+.swt::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;background:#000;transition:transform .15s}
+.swt:checked{background:var(--red)}
+.swt:checked::after{transform:translateX(24px);background:#fff}
+
+/* ---------- pricing combos ---------- */
+.price-sec{padding-block:90px;background:var(--char);border-bottom:4px solid #000}
+.price-head{display:grid;gap:14px;margin-bottom:56px;justify-items:start}
+.price-head .sec-title .red{color:var(--red)}
+.combos{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;align-items:stretch}
+.combo{position:relative;border:4px solid #000;box-shadow:8px 8px 0 #000;padding:30px 26px 28px;display:grid;gap:18px;align-content:start;min-width:0}
+.combo .k{font:700 .85rem/1 var(--cond);letter-spacing:.18em;text-transform:uppercase}
+.combo h3{font:400 2.6rem/.95 var(--poster);text-transform:uppercase}
+.combo ul{margin:0;padding:0;list-style:none;display:grid;gap:9px;font:600 1.05rem/1.25 var(--cond);letter-spacing:.02em}
+.combo li{display:flex;gap:10px}
+.combo li::before{content:"★";flex-shrink:0}
+.combo .burst{top:-34px;right:-22px;width:126px;height:126px;font:400 .9rem/1 var(--poster);text-transform:uppercase}
+.combo .burst b{display:block;font-weight:400;font-size:2.1rem}
+.combo .btn{margin-top:auto}
+.c1{background:var(--paper);color:var(--ink)}
+.c1 .burst{color:#fff}
+.c2{background:var(--red);color:#fff;transform:rotate(-1.2deg)}
+.c2 .burst{color:var(--ink)}
+.c3{background:var(--mustard);color:var(--ink)}
+.c3 .burst{color:#fff}
+.paywith{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:44px;font:700 .95rem/1 var(--cond);letter-spacing:.12em;text-transform:uppercase}
+.paywith b{background:var(--chalk);color:var(--ink);border:3px solid #000;padding:.55em .9em;box-shadow:3px 3px 0 #000}
+
+/* ---------- CTA ---------- */
+.cta-sec{padding-block:110px;background:#2a1a10 url(img/cafe.webp) center/cover;border-bottom:4px solid #000}
+.cta-sec::before{content:"";position:absolute;inset:0;background:rgba(12,8,6,.55)}
+.cta{position:relative;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+.cta-copy{display:grid;gap:18px;justify-items:start}
+.cta-copy .sec-title{color:#fff;text-shadow:5px 5px 0 #000}
+.cta-copy .sec-title .mus{color:var(--mustard)}
+.cta-copy p{font-size:1.12rem;max-width:46ch;background:var(--ink);padding:.7em .9em}
+.ticket{background:var(--paper);color:var(--ink);border:4px solid #000;box-shadow:10px 10px 0 #000;padding:28px;display:grid;gap:14px;position:relative}
+.ticket::before,.ticket::after{content:"";position:absolute;top:50%;width:28px;height:28px;border-radius:50%;background:var(--char);border:4px solid #000;transform:translateY(-50%)}
+.ticket::before{left:-18px}.ticket::after{right:-18px}
+.ticket h3{font:400 2rem/1 var(--poster);text-transform:uppercase}
+.ticket .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ticket .note b{color:var(--green)}
+
+footer{background:var(--ink);padding-block:56px 40px;overflow:hidden}
+footer .big{font:400 clamp(5rem,20vw,17rem)/.8 var(--poster);color:transparent;-webkit-text-stroke:2px #3a3330;text-transform:uppercase;white-space:nowrap;letter-spacing:.02em}
+footer .row{justify-content:space-between;margin-top:24px;color:var(--smoke);font:600 .95rem/1.4 var(--cond);letter-spacing:.08em;text-transform:uppercase}
+
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,180%);background:var(--mustard);color:var(--ink);border:3px solid #000;box-shadow:var(--hard);padding:12px 18px;font:700 1rem/1.2 var(--cond);letter-spacing:.06em;text-transform:uppercase;z-index:95;transition:transform .4s cubic-bezier(.2,1.3,.4,1), visibility .4s;max-width:calc(100% - 32px);text-align:center;visibility:hidden}
+.toast.show{transform:translate(-50%,0);visibility:visible}
+
+/* scroll reveal: starts dimmed, never hidden */
+.rv{transition:opacity .7s ease, transform .7s cubic-bezier(.2,.9,.3,1.1)}
+.rv.pre{opacity:.35;transform:translateY(30px) rotate(-1deg)}
+
+/* Amharic mode: Ethiopic glyphs fall back to Noto Sans Ethiopic, so give them weight and line room */
+html[lang="am"] body *{letter-spacing:0!important}
+html[lang="am"] :is(h1,h2,h3,h4,h5,.sec-title,.pill,.btn,.btn-sm,.label,.nav-links,.qty-big,.pm-pill,.pm-tab b,.tape .track,.sC .big,.sizz,.scr,.bignum,.kpis b,.combo h3,.spec,.tagp,.burst,.prod .meta b,.receipt h4,.receipt .tot,.fi .leader,.irow .nm b,.it .leader,.days,.step,.ex,.k){font-weight:800;font-synthesis:none}
+html[lang="am"] .hero h1{font-size:clamp(2.4rem,5.6vw,5.2rem);line-height:1.2}
+html[lang="am"] .hero h1 .scr{bottom:-.8em}
+html[lang="am"] .hero .am{font-family:var(--body);font-weight:600}
+html[lang="am"] .sec-title{font-size:clamp(2rem,4.8vw,4.2rem);line-height:1.22}
+html[lang="am"] .pill{line-height:1.3;padding-block:.3em}
+html[lang="am"] .combo h3{font-size:2.2rem;line-height:1.2}
+html[lang="am"] .sC .big{font-size:15cqw;line-height:1.05}
+html[lang="am"] .sC .big span{font-size:9cqw}
+html[lang="am"] .sC .sizz{font-size:5.2cqw;top:27cqw}
+html[lang="am"] .fi .leader{font-size:1.3rem}
+
+/* ---------- responsive ---------- */
+@media (max-width:1020px){
+  .hero .wrap,.builder,.config,.dash,.cta{grid-template-columns:1fr}
+  .hero .wrap{min-height:0}
+  .plate-stage{height:540px;max-width:560px;width:100%;justify-self:center}
+  .preview-col{position:static;order:-1}
+  .products{grid-template-columns:repeat(2,1fr)}
+  .combos{grid-template-columns:1fr;gap:44px}
+  .c2{transform:none}
+  .nav-links{display:none}
+  .langsw{margin-left:auto}
+  .feat-cols{grid-template-columns:1fr}
+  .builder-head,.dash-head{grid-template-columns:1fr}
+  .dash-head img{display:none}
+}
+@media (max-width:640px){
+  .logo{width:116px;height:78px}
+  nav .wrap{gap:10px}
+  nav .btn{padding:.6em .7em;font-size:.85rem}
+  .langsw button{padding:.55em .55em}
+  .logo b{font-size:1.5rem}
+  .plate-stage{height:400px}
+  .disc{width:340px;height:340px;margin:-170px 0 0 -170px}
+  .platter{width:310px;margin:-155px 0 0 -155px}
+  .spris{width:120px}
+  .tibs-h{width:150px}
+  .beans{width:110px}
+  .b-fast{width:110px;height:110px}
+  .b-fast b{font-size:1.7rem}
+  .scanme{font-size:1.4rem}
+  .steam{display:none}
+  .tapes{height:120px}
+  .tape .track{font-size:1.3rem}
+  .tpls{grid-template-columns:repeat(2,1fr)}
+  .irow{grid-template-columns:minmax(0,1fr) 84px}
+  .irow .check{grid-row:2}
+  .addrow{grid-template-columns:1fr 1fr}
+  .addrow .f:first-child{grid-column:1/-1}
+  .products{grid-template-columns:1fr}
+  .board{padding:36px 20px 44px;border-width:6px}
+  .board .deco-shiro{width:140px;right:-20px;bottom:-40px}
+  .board .deco-burst{right:10px;top:-40px;width:100px;height:100px}
+  .kpis{grid-template-columns:1fr}
+  .kpis div+div{border-left:0;border-top:3px solid #000}
+  .ticket .two{grid-template-columns:1fr}
+  .mount.l{left:14%}.mount.r{right:14%}
+  .bulb{display:none}
+  .combo .burst{right:-6px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}
+  .rv.pre{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+
+<div class="announce" aria-hidden="true"><div class="track" id="announce"></div></div>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Gebeta home"><b>GEBETA</b><span>ገበታ</span></a>
+    <div class="nav-links">
+      <a href="#live" data-i="n1">Menu screens</a>
+      <a href="#builder" data-i="n2">Builder</a>
+      <a href="#hardware" data-i="n3">Stands</a>
+      <a href="#pricing" data-i="n4">Pricing</a>
+      <a href="/login" data-i="n5">Log in</a>
+    </div>
+    <div class="langsw" role="group" aria-label="Language / ቋንቋ"><button type="button" data-sl="en" aria-pressed="true">EN</button><button type="button" data-sl="am" aria-pressed="false">አማ</button></div>
+    <a class="btn btn-mustard" href="/signup" data-i="n_go">Get started</a>
+  </div>
+</nav>
+
+<header class="hero wood" id="top">
+  <div class="wrap">
+    <div class="hero-copy">
+      <span data-i="h_label" class="label rise">Digital menus · QR stands · Menu screens</span>
+      <h1>
+        <span data-i="h_w1" class="w slam d1">Your menu</span>
+        <span data-i="h_w2" class="w slam d2">on every</span>
+        <span data-i="h_w3" class="w mus slam d3">table.</span>
+        <span data-i="h_scr" class="scr pop d5">in Addis Ababa</span>
+      </h1>
+      <p data-i="h_am" class="am rise d4">ምናሌዎ በየጠረጴዛው፣ በየስልኩ፣ በየስክሪኑ።</p>
+      <p data-i="h_lede" class="lede rise d4">Build a bilingual menu for your cafe in ten minutes. We deliver the QR stands and wall screens. Change a price on your phone and every table and screen updates.</p>
+      <div class="hero-ctas rise d5">
+        <a data-i="h_cta1" class="btn btn-red" href="/signup">Build my menu free</a>
+        <a data-i="h_cta2" class="btn btn-paper" href="#hardware">See the stands</a>
+      </div>
+      <div data-i="h_ticks" class="ticks rise d6"><span>Amharic + English</span><span>ጾም filter</span><span>Pay with Telebirr</span></div>
+    </div>
+
+    <div class="plate-stage" id="plateStage" aria-label="A beyaynetu fasting platter, a layered spris juice and sizzling tibs">
+      <div class="disc pop d1"></div>
+      <div class="layer platter" data-depth="10"><img class="pop d2" src="img/beyaynetu.webp" alt=""></div>
+      <div class="layer beans" data-depth="-18"><img class="pop d3" src="img/beans.webp" alt=""></div>
+      <div class="layer spris" data-depth="26"><img src="img/spris.webp" alt=""></div>
+      <div class="layer tibs-h" data-depth="22"><img class="pop d4" src="img/tibs.webp" alt=""></div>
+      <svg class="steam" viewBox="0 0 90 140" aria-hidden="true"><path d="M20 140 C 0 100, 40 80, 20 40 S 30 0, 25 -10"/><path d="M48 140 C 30 100, 70 80, 48 40 S 60 0, 52 -10"/><path d="M74 140 C 60 100, 92 82, 74 44"/></svg>
+      <div class="burst b-fast pop d5" data-burst="#f5b700"><span><small>የጾም</small><b>320 ብር</b><i data-i="h_beya">Beyaynetu</i></span></div>
+      <div class="scanme pop d6"><span data-i="h_scan">Scan, order, enjoy!</span>
+        <svg viewBox="0 0 90 70" aria-hidden="true"><path d="M5 5 C 40 0, 70 20, 70 55 M58 44 L70 58 L82 42"/></svg>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="tapes" aria-hidden="true">
+  <div class="tape t1"><div class="track" id="tape1"></div></div>
+  <div class="tape t2"><div class="track" id="tape2"></div></div>
+</div>
+
+<section class="live brick" id="live">
+  <div class="wrap">
+    <div class="live-head rv">
+      <span data-i="l_label" class="label">Menu screens</span>
+      <h2 data-i="l_title" class="sec-title">One menu. <span class="mus">Every screen.</span></h2>
+      <p data-i="l_sub" class="sec-sub">Hang a Gebeta screen behind the counter. It rotates your boards, runs your specials and changes prices the moment you do.</p>
+    </div>
+
+    <div class="tv-area rv">
+      <div class="bulb" aria-hidden="true"></div>
+      <div class="mount l"></div><div class="mount r"></div>
+      <div class="tv">
+        <div class="screen-tv" id="tv">
+          <!-- A: breakfast on wood -->
+          <div class="slide sA on" data-name="Breakfast board">
+            <div class="col">
+              <div class="pill">Breakfast · <span class="ge">ቁርስ</span></div>
+              <div class="it" data-id="ful"><div class="leader"><span data-i="b_ful">Special ful</span><i class="dots"></i><span class="price"><span class="old"></span><span class="now">220</span></span></div><p data-i="b_ful_d">Fava beans, tomato, onion, fried egg, fresh bread</p></div>
+              <div class="it" data-id="chech"><div class="leader"><span data-i="b_chech">Chechebsa</span><i class="dots"></i><span class="price"><span class="old"></span><span class="now">240</span></span></div><p data-i="b_chech_d">Torn flatbread, niter kibbeh, berbere, honey</p></div>
+              <div class="it" data-id="firfir"><div class="leader"><span data-i="b_firfir">Tibs firfir</span><i class="dots"></i><span class="price"><span class="old"></span><span class="now">340</span></span></div><p data-i="b_firfir_d">Injera tossed with spiced beef sauce</p></div>
+              <div class="pill" style="margin-top:.6cqw">Hot drinks · <span class="ge">ትኩስ</span></div>
+              <div class="it" data-id="mac"><div class="leader"><span data-i="b_mac">Macchiato</span><i class="dots"></i><span class="price"><span class="old"></span><span class="now">90</span></span></div></div>
+              <div class="it" data-id="buna"><div class="leader"><span data-i="b_buna">Jebena buna</span><i class="dots"></i><span class="price"><span class="old"></span><span class="now">70</span></span></div></div>
+              <div class="it" data-id="shai"><div class="leader"><span data-i="b_shai">Spiced shai</span><i class="dots"></i><span class="price"><span class="old"></span><span class="now">50</span></span></div></div>
+            </div>
+            <div class="right">
+              <div class="tab"><small data-i="b_welcome">Welcome to</small><b class="tvName">SELAM</b><span>buna house</span><em>ቦሌ · አዲስ አበባ</em></div>
+              <img class="food" src="img/ful.webp" alt="">
+              <div data-i="b_spec" class="spec">Special ful (220 ብር)</div>
+            </div>
+          </div>
+          <!-- B: fasting on green -->
+          <div class="slide sB" data-name="Fasting board">
+            <img class="plate" src="img/beyaynetu.webp" alt="">
+            <div>
+              <h4>የጾም ምግቦች</h4>
+              <h5>Fasting menu</h5>
+              <div class="leader"><span>Beyaynetu<span class="ge">በያይነቱ</span></span><i class="dots"></i><span class="price">320</span></div>
+              <div class="leader"><span>Shiro tegabino<span class="ge">ሽሮ</span></span><i class="dots"></i><span class="price">260</span></div>
+              <div class="leader"><span>Misir wot<span class="ge">ምስር</span></span><i class="dots"></i><span class="price">240</span></div>
+              <div class="leader"><span>Gomen<span class="ge">ጎመን</span></span><i class="dots"></i><span class="price">200</span></div>
+              <div class="leader"><span>Spris<span class="ge">ስፕሪስ</span></span><i class="dots"></i><span class="price">150</span></div>
+              <div data-i="b_foot" class="foot">Every Wednesday &amp; Friday</div>
+            </div>
+          </div>
+          <!-- C: tibs tuesday on mustard -->
+          <div class="slide sC" data-name="Tibs Tuesday promo">
+            <div data-i="c_big" class="big">Tibs<span>Tuesday</span></div>
+            <div data-i="c_sizz" class="sizz">Sizzling!</div>
+            <img class="food" src="img/tibs.webp" alt="">
+            <div class="burst" data-burst="#d7261e"><span data-i="c_burst">Only<b>390</b>ብር</span></div>
+            <div class="band"><span data-i="c_band">Shekla tibs · every Tuesday</span><span>12:00 – 3:00 PM · <span class="ge">ከቀኑ 6–9 ሰዓት</span></span></div>
+          </div>
+          <div class="wipe" id="wipe"><i></i><i></i><i></i></div>
+        </div>
+      </div>
+      <div class="tv-controls">
+        <button class="btn btn-mustard" type="button" id="tvPrice">Raise macchiato +10 ብር</button>
+        <button class="btn btn-paper" type="button" id="tvSold">Chechebsa sold out</button>
+        <button class="btn btn-red" type="button" id="tvNext" data-i="l_next">Next board</button>
+        <div class="dots-nav" id="tvDots" role="group" aria-label="Choose board"></div>
+      </div>
+      <div data-i="l_sync" class="sync"><span><b>●</b>Screen behind the counter</span><span><b>●</b>14 table stands</span><span><b>●</b>Phone menu</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="paper builder-sec" id="builder">
+  <div class="wrap">
+    <div class="builder-head rv">
+      <div style="display:grid;gap:14px;justify-items:start">
+        <span data-i="bu_label" class="label">Try the builder</span>
+        <h2 data-i="bu_title" class="sec-title">Make your menu. <span class="red">Right now.</span></h2>
+        <p data-i="bu_sub" class="sec-sub">This demo works. Rename the cafe, pick a board style, change prices, mark something sold out. The phone updates as you go.</p>
+      </div>
+      <span data-i="bu_script" class="script">no designer needed!</span>
+    </div>
+    <div class="builder">
+      <div class="controls">
+        <div class="box">
+          <div class="box-h"><h3 data-i="bu_cafe">Your cafe</h3><span class="step" data-i="bu_s1">Step 1</span></div>
+          <label class="f" for="cafeName"><span data-i="bu_name">Cafe name</span><input type="text" id="cafeName" value="Selam Buna House" maxlength="30" autocomplete="off"></label>
+          <div class="slug"><span data-i="bu_link">Permanent menu link:</span> <b id="slug">gebeta.et/selam-buna-house</b></div>
+        </div>
+        <div class="box">
+          <div class="box-h"><h3 data-i="bu_style">Board style</h3><span class="step" data-i="bu_s2">Step 2</span></div>
+          <div class="tpls" id="tpls"></div>
+          <div class="row" style="justify-content:space-between">
+            <div class="seg" role="group" aria-label="Menu language">
+              <button type="button" data-lang="en" aria-pressed="true">English</button>
+              <button type="button" data-lang="am" aria-pressed="false"><span class="ge">አማርኛ</span></button>
+            </div>
+            <label class="check" for="fastOnly"><input type="checkbox" id="fastOnly"><span data-i="bu_fast">Fasting only <span class="ge">(ጾም)</span></span></label>
+          </div>
+        </div>
+        <div class="box">
+          <div class="box-h"><h3 data-i="bu_items">Items &amp; prices</h3><span class="step" data-i="bu_birr">In birr</span></div>
+          <div class="row">
+            <button class="btn-sm mus" type="button" id="bumpDrinks" data-i="bu_bd">Drinks +10%</button>
+            <button class="btn-sm" type="button" id="bumpAll" data-i="bu_ba">Everything +10%</button>
+            <button class="btn-sm" type="button" id="resetPrices" data-i="bu_reset">Reset</button>
+          </div>
+          <div class="items" id="itemRows"></div>
+          <form class="addrow" id="addForm">
+            <label class="f" for="newName"><span data-i="bu_new">New item</span><input type="text" id="newName" placeholder="Avocado juice" data-ip="bu_ph" required></label>
+            <label class="f" for="newPrice"><span data-i="bu_price">Price</span><input type="number" id="newPrice" placeholder="160" min="1" required></label>
+            <label class="f" for="newCat"><span data-i="bu_sec">Section</span><select id="newCat"><option value="drinks" data-i="bu_o1">Drinks</option><option value="breakfast" data-i="bu_o2">Breakfast</option><option value="mains" data-i="bu_o3">Lunch</option></select></label>
+            <button class="btn-sm red" type="submit" data-i="bu_add">Add</button>
+          </form>
+          <label class="check" for="newFast"><input type="checkbox" id="newFast"><span data-i="bu_nf">New item is fasting-friendly</span></label>
+        </div>
+      </div>
+      <div class="preview-col">
+        <div class="phone"><div class="notch"></div><div class="pscreen" id="pscreen"></div></div>
+        <div data-i="bu_hint" class="hint">Live preview · tap the buttons in the phone</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hw wood" id="hardware">
+  <div class="wrap">
+    <div class="hw-head rv">
+      <span data-i="hw_label" class="label">Stands &amp; screens</span>
+      <h2 data-i="hw_title" class="sec-title" style="color:#fff">Pick your <span class="mus">hardware.</span></h2>
+      <p data-i="hw_sub" class="sec-sub" style="background:var(--ink);padding:.6em .9em">Every stand carries your permanent QR code, so you never reprint. We deliver and set up across Addis.</p>
+    </div>
+    <div class="products" id="products"></div>
+    <div class="config">
+      <div class="controls">
+        <div class="box" id="ledBox">
+          <div class="box-h"><h3 data-i="hw_led">LED color</h3><span class="step" data-i="hw_bat">USB-C battery</span></div>
+          <div class="leds" id="leds"></div>
+          <p data-i="hw_note" class="note">Runs on a rechargeable battery, so it keeps glowing through power cuts and needs no outlet at the table.</p>
+        </div>
+        <div class="box">
+          <div class="box-h"><h3 id="qtyTitle">How many tables?</h3><span class="step" data-i="hw_save">10+ saves 10%</span></div>
+          <div class="qty-big" id="qtyBig">12<small>stands</small></div>
+          <input type="range" id="qty" min="1" max="40" value="12" aria-label="Quantity">
+          <p data-i="hw_note2" class="note">Sample prices. Delivery is free in Addis for 10 or more.</p>
+        </div>
+      </div>
+      <div class="receipt-wrap">
+        <div class="slot"></div>
+        <div class="receipt" id="receipt"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feat-sec brick" id="features">
+  <div class="wrap">
+    <div class="board rv">
+      <div class="burst deco-burst" data-burst="#f5b700"><span data-i="f_burst">All<b>9</b>included</span></div>
+      <div class="board-top">
+        <h2 data-i="f_title" class="sec-title">What's on <span class="mus">the menu</span></h2>
+        <span data-i="f_script" class="script">house specials</span>
+      </div>
+      <div class="feat-cols">
+        <div class="feat-col">
+          <div data-i="f_p1" class="pill">For your customers</div>
+          <div class="fi" data-i="f1"><div class="leader"><span>Amharic + English <span class="ge">አማ</span></span><i class="dots"></i><span class="price">Free</span></div><p>One tap switches the language. Leave the Amharic blank and it falls back to English.</p></div>
+          <div class="fi" data-i="f2"><div class="leader"><span>Fasting filter <span class="ge">ጾም</span></span><i class="dots"></i><span class="price">Free</span></div><p>Mark fasting dishes once. On Wednesdays, Fridays and during Lent, customers see only what they can eat.</p></div>
+          <div class="fi" data-i="f3"><div class="leader"><span>Opens fast on 3G</span><i class="dots"></i><span class="price">Free</span></div><p>Under 100 KB per menu with compressed photos. Works on slow and prepaid data.</p></div>
+          <div class="fi" data-i="f4"><div class="leader"><span>One permanent QR</span><i class="dots"></i><span class="price">Free</span></div><p>The code on your stand never changes. Edit the menu forever without printing again.</p></div>
+        </div>
+        <div class="feat-col">
+          <div data-i="f_p2" class="pill" style="background:var(--mustard);color:var(--ink)">For you, the owner</div>
+          <div class="fi" data-i="f5"><div class="leader"><span>Instant price changes</span><i class="dots"></i><span class="price">Cafe</span></div><p>Change one price or raise a whole section by a percentage. Tables and screens update within seconds.</p></div>
+          <div class="fi" data-i="f6"><div class="leader"><span>Sold out in two taps</span><i class="dots"></i><span class="price">Free</span></div><p>Mark a dish sold out from behind the counter. It comes back on the menu the next morning.</p></div>
+          <div class="fi" data-i="f7"><div class="leader"><span>Telegram bot</span><i class="dots"></i><span class="price">Cafe</span></div><p>Send <code>/price macchiato 100</code> to the bot. No app to install.</p></div>
+          <div class="fi" data-i="f8"><div class="leader"><span>Scan analytics</span><i class="dots"></i><span class="price">Cafe</span></div><p>Weekly scans, busiest hours and most-viewed dishes.</p></div>
+          <div class="fi" data-i="f9"><div class="leader"><span>Local payment</span><i class="dots"></i><span class="price">Always</span></div><p>Pay with Telebirr, CBE Birr or Chapa. Every price is in birr.</p></div>
+        </div>
+      </div>
+      <img class="deco-shiro" src="img/shiro.webp" alt="">
+    </div>
+  </div>
+</section>
+
+<section class="dash-sec" id="dashboard">
+  <div class="wrap">
+    <div class="dash-head rv">
+      <div style="display:grid;gap:14px;justify-items:start">
+        <span data-i="d_label" class="label" style="background:var(--ink);color:var(--mustard)">Owner dashboard</span>
+        <h2 data-i="d_title" class="sec-title">Know what <span class="w">sells.</span></h2>
+      </div>
+      <img src="img/burger.webp" alt="">
+    </div>
+    <div class="dash">
+      <div class="box rv">
+        <div class="box-h"><h3 data-i="d_scans">Menu scans this week</h3><span class="ex" data-i="d_ex">Example data</span></div>
+        <div class="bignum">402<small data-i="d_up">▲ 18% vs last week</small></div>
+        <div>
+          <div class="chart" id="chart"></div>
+          <div data-i="d_days" class="days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+        </div>
+        <div class="kpis">
+          <div data-i="d_k1"><small>Most viewed</small><b>Macchiato</b></div>
+          <div data-i="d_k2"><small>Busiest hour</small><b>4 – 5 PM</b></div>
+          <div data-i="d_k3"><small>Read in Amharic</small><b>61%</b></div>
+        </div>
+      </div>
+      <div style="display:grid;gap:24px;min-width:0">
+        <div class="box rv">
+          <div class="box-h"><h3 data-i="d_tg">Telegram bot</h3><span class="ex" data-i="d_exc">Example chat</span></div>
+          <div class="chat" id="chat"></div>
+        </div>
+        <div class="box rv">
+          <div class="box-h"><h3 data-i="d_so">Sold out today</h3><span class="ex" data-i="d_link">Linked to the builder</span></div>
+          <div class="soldlist" id="soldlist"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="price-sec" id="pricing">
+  <div class="wrap">
+    <div class="price-head rv">
+      <span data-i="p_label" class="label">Pricing</span>
+      <h2 data-i="p_title" class="sec-title" style="color:#fff">Pick a <span class="red">combo.</span></h2>
+      <p data-i="p_sub" class="sec-sub">Sample prices in birr. Stands and screens are a one-time purchase and work with every plan.</p>
+    </div>
+    <div class="combos">
+      <div class="combo c1 rv">
+        <div class="burst" data-burst="#d7261e"><span><b>0</b>ብር</span></div>
+        <span class="k" data-i="p1k">Combo 1</span><h3 data-i="p1h">Free</h3>
+        <ul data-i="p1u"><li>One menu, up to 30 items</li><li>Wood &amp; Red board style</li><li>Amharic and English</li><li>Small Gebeta label on the menu</li></ul>
+        <a class="btn btn-red" href="/signup" data-i="p1b">Start free</a>
+      </div>
+      <div class="combo c2 rv">
+        <div class="burst" data-burst="#f5b700"><span data-i="p2burst"><b>590</b>ብር / month</span></div>
+        <span class="k" data-i="p2k">Combo 2 · Most popular</span><h3 data-i="p2h">Cafe</h3>
+        <ul data-i="p2u"><li>Unlimited items and photos</li><li>All four board styles</li><li>Scan analytics and Telegram bot</li><li>Bulk price changes</li><li>Menu screen support</li></ul>
+        <a class="btn btn-mustard" href="/signup" data-i="p2b">Choose Cafe</a>
+      </div>
+      <div class="combo c3 rv">
+        <div class="burst" data-burst="#0b0a0a"><span data-i="p3burst"><b>1,490</b>ብር / month</span></div>
+        <span class="k" data-i="p3k">Family platter</span><h3 data-i="p3h">Group</h3>
+        <ul data-i="p3u"><li>Up to 5 branches</li><li>Different prices per branch</li><li>Staff accounts</li><li>Setup visit from our team</li></ul>
+        <a class="btn btn-paper" href="#start" data-i="p3b">Talk to us</a>
+      </div>
+    </div>
+    <div class="paywith"><span data-i="p_with">Pay with</span><b>Telebirr</b><b>CBE Birr</b><b>Chapa</b><b data-i="p_bank">Bank transfer</b></div>
+  </div>
+</section>
+
+<section class="cta-sec" id="start">
+  <div class="wrap">
+    <div class="cta">
+      <div class="cta-copy rv">
+        <span data-i="x_label" class="label">Free demo stand</span>
+        <h2 data-i="x_title" class="sec-title">We'll bring one <span class="mus">to your cafe.</span></h2>
+        <p data-i="x_p">Tell us where you are. We'll visit, build your menu with you and leave a demo stand on a table for a week.</p>
+      </div>
+      <form class="ticket rv" id="leadForm">
+        <h3 data-i="x_h">Book a visit</h3>
+        <label class="f" for="leadCafe"><span data-i="x_name">Cafe name</span><input type="text" id="leadCafe" required placeholder="Selam Buna House"></label>
+        <div class="two">
+          <label class="f" for="leadPhone"><span data-i="x_phone">Phone</span><input type="tel" id="leadPhone" required placeholder="09 11 23 45 67"></label>
+          <label class="f" for="leadArea"><span data-i="x_area">Area</span><select id="leadArea"><option data-i="x_o1">Bole</option><option data-i="x_o2">Kazanchis</option><option data-i="x_o3">Piassa</option><option data-i="x_o4">Sarbet</option><option data-i="x_o5">CMC</option><option data-i="x_o6">Megenagna</option><option data-i="x_o7">Outside Addis</option></select></label>
+        </div>
+        <button class="btn btn-red" type="submit" data-i="x_btn">Request a visit</button>
+        <p data-i="x_note" class="note" id="leadNote">This is a prototype. The form doesn't send anything yet.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="big" aria-hidden="true">Gebeta</div>
+    <div class="row"><span data-i="ft1">Digital menus, QR stands and menu screens for Ethiopian cafes</span><span class="ge" style="letter-spacing:0" data-i="ft2">ገበታ · Prototype</span></div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+(() => {
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let tt;
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),2600); }
+let LANG='en'; try{ if(localStorage.getItem('gebeta-lang')==='am') LANG='am'; }catch(e){}
+const L=(en,am)=>LANG==='am'?am:en;
+
+/* ---- starbursts ---- */
+function burstSVG(color, points=18){
+  const pts=[]; for(let i=0;i<points*2;i++){ const r=i%2?40:50, a=Math.PI*i/points; pts.push((50+r*Math.sin(a)).toFixed(2)+','+(50-r*Math.cos(a)).toFixed(2)); }
+  return `<svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="${pts.join(' ')}" fill="${color}" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/></svg>`;
+}
+$$('[data-burst]').forEach(el => el.insertAdjacentHTML('afterbegin', burstSVG(el.dataset.burst)));
+
+/* ---- marquees ---- */
+const ITEMS_TAPE = [['Macchiato','ማኪያቶ',90],['Spris','ስፕሪስ',150],['Special ful','ፉል',220],['Shiro','ሽሮ',260],['Beyaynetu','በያይነቱ',320],['Shekla tibs','ሸክላ ጥብስ',390],['Jebena buna','ጀበና ቡና',70],['Chechebsa','ጨጨብሳ',240]];
+const tape = ITEMS_TAPE.map(([e,a,p]) => `<span>${e} <em>${a}</em> <b>${p} ብር</b> ★</span>`).join('');
+$('#tape1').innerHTML = tape + tape;
+$('#tape2').innerHTML = ['Scan the QR','ይቃኙ','Change prices anytime','ዋጋ ይቀይሩ','Fasting menu ready','የጾም ምናሌ','Delivered in Addis','አዲስ አበባ'].map(t => `<span>${/[ሀ-፿]/.test(t)?`<em>${t}</em>`:t} ★</span>`).join('').repeat(2);
+function renderAnnounce(){
+  const list = L(['Free demo stand for Addis cafes','<span class="ge">የጾም ምናሌ ዝግጁ ነው</span>','Menu screens now available','Pay with Telebirr','Delivery in 2–4 days'],
+                 ['ለአዲስ አበባ ካፌዎች ነፃ የሙከራ መቆሚያ','የጾም ምናሌ ዝግጁ ነው','የምናሌ ስክሪኖች አሁን ይገኛሉ','በቴሌብር ይክፈሉ','በ2–4 ቀናት ውስጥ ይደርሳል']);
+  const ann = list.map(t=>`<span>${t}</span><span>★</span>`).join('');
+  $('#announce').innerHTML = ann + ann;
+}
+
+/* ---- hero parallax ---- */
+const stage = $('#plateStage');
+if (!RM && matchMedia('(pointer:fine)').matches){
+  const layers = $$('.layer', stage);
+  window.addEventListener('pointermove', e => {
+    const x = e.clientX / innerWidth - .5, y = e.clientY / innerHeight - .5;
+    layers.forEach(l => { const d = +l.dataset.depth; l.style.translate = `${x*d}px ${y*d}px`; });
+  });
+}
+
+/* ---- QR ---- */
+function drawQR(canvas, text, dark='#000', light='#fff'){
+  const ctx = canvas.getContext('2d'); let n, dk;
+  try { const q = qrcode(0,'M'); q.addData(text); q.make(); n=q.getModuleCount(); dk=(r,c)=>q.isDark(r,c); }
+  catch(e){ n=25; let s=[...text].reduce((a,c)=>a*31+c.charCodeAt(0)>>>0,7); const R=()=>(s=(s*1103515245+12345)>>>0)/4294967296;
+    const g=Array.from({length:n},()=>Array.from({length:n},()=>R()>.5));
+    const f=(r0,c0)=>{for(let r=0;r<7;r++)for(let c=0;c<7;c++)g[r0+r][c0+c]=r==0||r==6||c==0||c==6||(r>1&&r<5&&c>1&&c<5)};
+    f(0,0);f(0,n-7);f(n-7,0); dk=(r,c)=>g[r][c]; }
+  const m=2, S=n+m*2; canvas.width=S; canvas.height=S;
+  ctx.fillStyle=light; ctx.fillRect(0,0,S,S); ctx.fillStyle=dark;
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++) if(dk(r,c)) ctx.fillRect(c+m,r+m,1,1);
+}
+
+/* ---- TV board ---- */
+const tv = $('#tv'), slides = $$('.slide', tv), wipe = $('#wipe');
+let cur = 0, busy = false, timer;
+$('#tvDots').innerHTML = slides.map((s,i)=>`<button type="button" aria-label="${s.dataset.name}" aria-pressed="${i===0}"></button>`).join('');
+function show(i, cb){
+  if (busy || i === cur){ cb && cb(); return; }
+  const swap = () => { slides[cur].classList.remove('on'); cur = i; slides[cur].classList.add('on'); $$('#tvDots button').forEach((b,j)=>b.setAttribute('aria-pressed', j===cur)); };
+  if (RM){ swap(); cb && cb(); return; }
+  busy = true; wipe.classList.remove('go'); void wipe.offsetWidth; wipe.classList.add('go');
+  setTimeout(swap, 520);
+  setTimeout(() => { busy = false; cb && cb(); }, 1120);
+}
+function auto(){ clearInterval(timer); if (!RM) timer = setInterval(() => show((cur+1)%slides.length), 5200); }
+$('#tvDots').addEventListener('click', e => { const b=e.target.closest('button'); if(!b) return; show($$('#tvDots button').indexOf(b)); auto(); });
+$('#tvNext').onclick = () => { show((cur+1)%slides.length); auto(); };
+let mac = 90, macChanged = false, chechOut = false;
+function tvLabels(){
+  $('#tvPrice').textContent = L('Raise macchiato +10 ብር','ማኪያቶ +10 ብር ይጨምሩ') + (macChanged ? L(` (now ${mac})`,` (አሁን ${mac})`) : '');
+  $('#tvSold').textContent = chechOut ? L('Chechebsa back on','ጨጨብሳ ተመልሷል') : L('Chechebsa sold out','ጨጨብሳ አልቋል');
+  $('.sA .it[data-id="chech"] .now', tv).textContent = chechOut ? L('SOLD OUT','አልቋል') : '240';
+}
+$('#tvPrice').onclick = () => {
+  show(0, () => {
+    const it = $('.sA .it[data-id="mac"]', tv);
+    it.querySelector('.old').textContent = mac; mac += 10;
+    it.querySelector('.now').textContent = mac;
+    it.classList.remove('changed'); void it.offsetWidth; it.classList.add('changed');
+    macChanged = true; tvLabels();
+    toast(L(`Macchiato is now ${mac} birr on the screen, 14 stands and the phone menu`,`ማኪያቶ አሁን በስክሪኑ፣ በ14 መቆሚያዎችና በስልክ ምናሌው ላይ ${mac} ብር ነው`));
+  }); auto();
+};
+$('#tvSold').onclick = () => {
+  show(0, () => {
+    chechOut = $('.sA .it[data-id="chech"]', tv).classList.toggle('out'); tvLabels();
+    toast(chechOut ? L('Chechebsa marked sold out everywhere','ጨጨብሳ በሁሉም ቦታ «አልቋል» ተብሏል') : L('Chechebsa is back on the menu','ጨጨብሳ ወደ ምናሌው ተመልሷል'));
+  }); auto();
+};
+auto();
+
+/* ---- builder ---- */
+const CATS = [{id:'drinks',en:'Coffee & drinks',am:'ቡና እና መጠጥ'},{id:'breakfast',en:'Breakfast',am:'ቁርስ'},{id:'mains',en:'Lunch',am:'ምሳ'}];
+const BASE = [
+  {id:'mac',cat:'drinks',en:'Macchiato',am:'ማኪያቶ',d:'Double ristretto, steamed milk',da:'ድርብ ኤስፕሬሶ ከወተት ጋር',price:90,fast:false},
+  {id:'buna',cat:'drinks',en:'Jebena buna',am:'የጀበና ቡና',d:'Ceremony coffee with popcorn',da:'ከፈንዲሻ ጋር',price:70,fast:true},
+  {id:'shai',cat:'drinks',en:'Spiced shai',am:'ሻይ በቅመም',d:'Black tea, cinnamon, clove',da:'ቀረፋ እና ቅርንፉድ',price:50,fast:true},
+  {id:'spris',cat:'drinks',en:'Spris',am:'ስፕሪስ',d:'Avocado, mango, papaya, strawberry',da:'አቮካዶ፣ ማንጎ፣ ፓፓያ',price:150,fast:true},
+  {id:'ful',cat:'breakfast',en:'Special ful',am:'ስፔሻል ፉል',d:'Fava beans, tomato, egg, bread',da:'ባቄላ፣ ቲማቲም፣ እንቁላል',price:220,fast:false},
+  {id:'chech',cat:'breakfast',en:'Chechebsa',am:'ጨጨብሳ',d:'Flatbread, spiced butter, honey',da:'ቂጣ በቅቤና በማር',price:240,fast:false},
+  {id:'shiro',cat:'mains',en:'Shiro tegabino',am:'ሽሮ ተጋቢኖ',d:'Chickpea stew in a clay pot',da:'በሸክላ የሚቀርብ ሽሮ',price:260,fast:true},
+  {id:'beya',cat:'mains',en:'Beyaynetu',am:'በያይነቱ',d:'Seven fasting stews on injera',da:'የጾም በያይነቱ',price:320,fast:true},
+  {id:'tibs',cat:'mains',en:'Shekla tibs',am:'ሸክላ ጥብስ',d:'Sizzling beef, rosemary, chili',da:'በሸክላ የሚቀርብ ጥብስ',price:390,fast:false}
+];
+const clone = () => BASE.map(i=>({...i,out:false}));
+const TPLS = [
+  {id:'wood', name:'Wood & Red', am:'እንጨትና ቀይ', bg:'#1a1210 url(img/wood.webp) center/cover', pill:'#d7261e', ink:'#fff', img:'tibs'},
+  {id:'mustard', name:'Mustard', am:'ሰናፍጭ ቢጫ', bg:'#f5b700', pill:'#0b0a0a', ink:'#0b0a0a', img:'spris'},
+  {id:'paper', name:'Paper & Orange', am:'ወረቀትና ብርቱካን', bg:'#fbf6ec', pill:'#f26a1b', ink:'#1a1a1a', img:'ful'},
+  {id:'green', name:'Fasting Green', am:'የጾም አረንጓዴ', bg:'#1f6b35', pill:'#f5b700', ink:'#fff', img:'beyaynetu'}
+];
+const HERO_TAG = {wood:['Shekla tibs','ሸክላ ጥብስ','tibs'], mustard:['Fresh spris','ትኩስ ስፕሪስ','spris'], paper:['Special ful','ስፔሻል ፉል','ful'], green:['Fasting platter','የጾም በያይነቱ','beya']};
+const live = {name:'Selam Buna House', tpl:'wood', lang:'en', fastOnly:false, items:clone()};
+const ps = $('#pscreen');
+const slugify = s => s.toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g,'').trim().replace(/[\s_]+/g,'-').replace(/-+/g,'-') || 'your-cafe';
+
+function renderPhone(flip){
+  const am = live.lang==='am', t=(e,a)=>am?a:e;
+  const words = (live.name.trim() || 'Your cafe').split(/\s+/);
+  const first = words[0], rest = words.slice(1).join(' ');
+  const tpl = TPLS.find(x=>x.id===live.tpl), ht = HERO_TAG[live.tpl];
+  const heroItem = live.items.find(i=>i.id===ht[2]);
+  let h = `<div class="pm${flip?' flip':''}" data-t="${live.tpl}" data-lang="${live.lang}">
+    <div class="pm-tab"><small>${t('Welcome to','እንኳን ደህና መጡ')}</small><b>${esc(first)}</b>${rest?`<span>${esc(rest)}</span>`:''}</div>
+    <div class="pm-hero"><img src="img/${tpl.img}.webp" alt=""><div class="tagp">${t(ht[0],ht[1])}${heroItem?` · ${heroItem.price}`:''}</div></div>
+    <div class="pm-chips">
+      <button class="pm-chip ${!am?'on':''}" data-act="lang" data-v="en">EN</button>
+      <button class="pm-chip ${am?'on':''}" data-act="lang" data-v="am">አማ</button>
+      <button class="pm-chip ${live.fastOnly?'on':''}" data-act="fast">${t('Fasting only','ጾም ብቻ')}</button>
+    </div>`;
+  for (const c of CATS){
+    const list = live.items.filter(i=>i.cat===c.id && (!live.fastOnly || i.fast));
+    if (!list.length) continue;
+    h += `<div class="pm-pill">${am?`<span class="ge">${c.am}</span>`:c.en}</div>`;
+    for (const i of list){
+      h += `<div class="pm-it ${i.out?'out':''}" data-id="${i.id}">
+        <div class="leader"><span class="nm"><span>${esc(am&&i.am?i.am:i.en)}</span>${i.fast?`<span class="tg fast">${t('Fasting','ጾም')}</span>`:''}${i.out?`<span class="tg out">${t('Sold out','አልቋል')}</span>`:''}</span><i class="dots"></i><span class="price">${i.price}</span></div>
+        ${i.d?`<p>${esc(am&&i.da?i.da:i.d)}</p>`:''}</div>`;
+    }
+  }
+  h += `<div class="pm-foot">${t('Prices in birr · VAT included','ዋጋዎቹ በብር · ተ.እ.ታን ያካትታሉ')}<br>gebeta.et/${esc(slugify(live.name))}</div></div>`;
+  const top = ps.scrollTop; ps.innerHTML = h; ps.scrollTop = top;
+}
+ps.addEventListener('click', e => { const b=e.target.closest('[data-act]'); if(!b) return;
+  if (b.dataset.act==='lang') live.lang=b.dataset.v; else live.fastOnly=!live.fastOnly; sync(); });
+
+let lastSlug='';
+function sync(flip){
+  renderPhone(flip);
+  $('#slug').textContent = 'gebeta.et/' + slugify(live.name);
+  $$('.seg [data-lang]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.lang===live.lang));
+  $('#fastOnly').checked = live.fastOnly;
+  const first = (live.name.trim().split(/\s+/)[0] || 'Your cafe');
+  $$('.tvName').forEach(n=>n.textContent=first.toUpperCase());
+  $$('.stand .pn').forEach(n=>n.textContent=live.name || 'Your cafe');
+  const s = slugify(live.name); if (s!==lastSlug){ lastSlug=s; drawAllQR(); }
+  renderSold();
+}
+$('#cafeName').addEventListener('input', e => { live.name=e.target.value; sync(); });
+function renderTpls(){ $('#tpls').innerHTML = TPLS.map(t=>`<button type="button" class="tpl" data-tpl="${t.id}" aria-pressed="${t.id===live.tpl}">
+  <span class="sw" style="background:${t.bg};color:${t.ink}"><i style="background:${t.pill}"></i><u></u><u></u><img src="img/${t.img}.webp" alt=""></span><span>${L(t.name,t.am)}</span></button>`).join(''); }
+$('#tpls').addEventListener('click', e => { const b=e.target.closest('.tpl'); if(!b) return; live.tpl=b.dataset.tpl;
+  $$('.tpl').forEach(x=>x.setAttribute('aria-pressed', x===b)); sync(true); });
+$$('.seg [data-lang]').forEach(b=>b.addEventListener('click',()=>{ live.lang=b.dataset.lang; sync(); }));
+$('#fastOnly').addEventListener('change', e => { live.fastOnly=e.target.checked; sync(); });
+
+function renderRows(){
+  $('#itemRows').innerHTML = live.items.map(i=>`<div class="irow" data-id="${i.id}">
+    <div class="nm"><b>${esc(LANG==='am'&&i.am?i.am:i.en)}</b><small>${esc(LANG==='am'?(i.am?i.en:'—'):(i.am||'—'))}</small></div>
+    <input type="number" id="p-${i.id}" min="1" value="${i.price}" aria-label="Price of ${esc(i.en)} in birr">
+    <label class="check"><input type="checkbox" data-f="fast" ${i.fast?'checked':''}>${L('Fasting','ጾም')}</label>
+    <label class="check out"><input type="checkbox" data-f="out" ${i.out?'checked':''}>${L('Sold out','አልቋል')}</label></div>`).join('');
+}
+$('#itemRows').addEventListener('input', e => { const r=e.target.closest('.irow'); if(!r) return; const it=live.items.find(i=>i.id===r.dataset.id);
+  if (e.target.type==='number'){ const v=parseInt(e.target.value,10); if(v>0) it.price=v; } else it[e.target.dataset.f]=e.target.checked; sync(); });
+const r5 = v => Math.round(v/5)*5;
+function bump(f, msg){ live.items.forEach(i=>{ if(f(i)) i.price=r5(i.price*1.1); }); renderRows(); sync();
+  live.items.filter(f).forEach(i=>$(`.pm-it[data-id="${i.id}"]`, ps)?.classList.add('flash')); toast(msg); }
+$('#bumpDrinks').onclick = () => bump(i=>i.cat==='drinks',L('Drink prices up 10%, rounded to 5 birr','የመጠጥ ዋጋ በ10% ጨምሯል፤ ወደ 5 ብር ተጠጋግቷል'));
+$('#bumpAll').onclick = () => bump(()=>true,L('All prices up 10%, rounded to 5 birr','ሁሉም ዋጋ በ10% ጨምሯል፤ ወደ 5 ብር ተጠጋግቷል'));
+$('#resetPrices').onclick = () => { live.items.forEach(i=>{ const b=BASE.find(x=>x.id===i.id); if(b) i.price=b.price; }); renderRows(); sync(); toast(L('Prices reset','ዋጋዎቹ ወደ ነበሩበት ተመልሰዋል')); };
+$('#addForm').addEventListener('submit', e => { e.preventDefault();
+  const name=$('#newName').value.trim(), price=parseInt($('#newPrice').value,10); if(!name||!(price>0)) return;
+  const id='n'+Date.now(); live.items.push({id,cat:$('#newCat').value,en:name,am:'',d:'',da:'',price,fast:$('#newFast').checked,out:false});
+  e.target.reset(); $('#newFast').checked=false; renderRows(); sync();
+  const el=$(`.pm-it[data-id="${id}"]`, ps); if(el){ el.classList.add('flash'); ps.scrollTo({top:el.offsetTop-120,behavior:'smooth'}); }
+  toast(L(`${name} added to the menu`,`${name} ወደ ምናሌው ተጨምሯል`)); });
+
+/* ---- sold out (dashboard) ---- */
+function renderSold(){
+  $('#soldlist').innerHTML = live.items.filter(i=>['mac','spris','chech','tibs'].includes(i.id)).map(i=>`<label for="so-${i.id}"><span>${esc(i.en)}<span class="ge">${esc(i.am)}</span></span><input class="swt" type="checkbox" id="so-${i.id}" data-id="${i.id}" ${i.out?'checked':''}></label>`).join('');
+}
+$('#soldlist').addEventListener('change', e => { const it=live.items.find(i=>i.id===e.target.dataset.id); if(!it) return;
+  it.out=e.target.checked; renderRows(); sync(); const nm=L(it.en,it.am||it.en); toast(it.out?L(`${nm} marked sold out on every table`,`${nm} በሁሉም ጠረጴዛ ላይ «አልቋል» ተብሏል`):L(`${nm} is back on the menu`,`${nm} ወደ ምናሌው ተመልሷል`)); });
+
+/* ---- hardware ---- */
+const KINDS = [
+  {id:'acrylic', cls:'p-acr', name:'Printed acrylic', sub:'Clear acrylic, UV print, 10 × 15 cm', price:850, unit:'stand', an:'የታተመ አክሪሊክ', as:'ግልጽ አክሪሊክ፣ የUV ህትመት፣ 10 × 15 ሴ.ሜ', au:'አንዱ'},
+  {id:'wood', cls:'p-wood', name:'Wanza wood', sub:'Local hardwood block, swappable card', price:1400, unit:'stand', an:'የዋንዛ እንጨት', as:'የሀገር ውስጥ ጠንካራ እንጨት፣ የሚቀየር ካርድ', au:'አንዱ'},
+  {id:'led', cls:'p-led', name:'LED backlit', sub:'Glowing edge, rechargeable battery', price:3900, unit:'stand', an:'የLED መብራት ያለው', as:'የሚያበራ ጠርዝ፣ ቻርጅ የሚደረግ ባትሪ', au:'አንዱ'},
+  {id:'tv', cls:'p-tv', name:'Menu screen', sub:'43" wall screen, player, mount, setup', price:38500, unit:'screen', an:'የምናሌ ስክሪን', as:'43 ኢንች የግድግዳ ስክሪን፣ ማጫወቻ፣ መስቀያና ገጠማ', au:'አንዱ'}
+];
+const LEDS = [{c:'#ffb547',n:'Amber',a:'አምበር'},{c:'#fff1d6',n:'Warm white',a:'ሞቅ ያለ ነጭ'},{c:'#ff5f87',n:'Rose',a:'ሮዝ'},{c:'#5fe39a',n:'Green',a:'አረንጓዴ'}];
+const cfg = {kind:'led', led:'#ffb547', qty:12};
+const standHTML = k => `<div class="stand" data-kind="${k}"><div class="panel"><div class="pn">${esc(live.name)}</div><canvas width="29" height="29"></canvas><div class="ps">Scan for menu</div><div class="pa">ምናሌውን ይቃኙ</div></div><div class="base"></div></div>`;
+$('#products').innerHTML = KINDS.map(k=>`<button type="button" class="prod ${k.cls}" data-k="${k.id}" aria-pressed="${k.id===cfg.kind}">
+  <span class="stage"><span class="check-badge"></span>${k.id==='tv' ? `<span class="mini-tv"><span class="mt"><div id="miniTv"></div></span></span>` : standHTML(k.id)}</span>
+  <span class="meta"></span></button>`).join('');
+function renderProdMeta(){ $$('.prod').forEach(b=>{ const k=KINDS.find(x=>x.id===b.dataset.k);
+  b.querySelector('.meta').innerHTML = `<b>${L(k.name,k.an)}</b><small>${L(k.sub,k.as)}</small><span class="pr">${k.price.toLocaleString('en-US')} ብር / ${L(k.unit,k.au)}</span>`; }); }
+// mini screen: reuse the breakfast board
+const mini = $('.sA', tv).cloneNode(true); mini.classList.add('on'); $('#miniTv').appendChild(mini);
+$('#leds').innerHTML = LEDS.map(l=>`<button type="button" aria-label="${l.n}" data-c="${l.c}" aria-pressed="${l.c===cfg.led}" style="background:${l.c}"></button>`).join('');
+$('#products').addEventListener('click', e => { const b=e.target.closest('.prod'); if(!b) return; cfg.kind=b.dataset.k;
+  if (cfg.kind==='tv' && cfg.qty>4) { cfg.qty=1; $('#qty').value=1; } updateCfg(); });
+$('#leds').addEventListener('click', e => { const b=e.target.closest('button'); if(!b) return; cfg.led=b.dataset.c; updateCfg(); });
+$('#qty').addEventListener('input', e => { cfg.qty=+e.target.value; updateCfg(); });
+function drawAllQR(){ const url='https://gebeta.et/'+slugify(live.name); $$('.stand canvas').forEach(c=>drawQR(c,url,'#0b0a0a','#ffffff')); }
+const fmt = n => Math.round(n).toLocaleString('en-US');
+let orderNo = 142;
+function updateCfg(){
+  const k = KINDS.find(x=>x.id===cfg.kind);
+  $$('.prod').forEach(b=>b.setAttribute('aria-pressed', b.dataset.k===cfg.kind));
+  $$('.stand[data-kind="led"]').forEach(s=>s.style.setProperty('--led', cfg.led));
+  $('#ledBox').hidden = cfg.kind!=='led';
+  const isTv = cfg.kind==='tv';
+  $('#qty').max = isTv ? 6 : 40; if (cfg.qty > +$('#qty').max){ cfg.qty=+$('#qty').max; $('#qty').value=cfg.qty; }
+  $('#qtyTitle').textContent = isTv ? L('How many screens?','ስንት ስክሪን?') : L('How many tables?','ስንት ጠረጴዛ?');
+  $('#qtyBig').innerHTML = `${cfg.qty}<small>${LANG==='am'?(isTv?'ስክሪን':'መቆሚያ'):(isTv?(cfg.qty===1?'screen':'screens'):(cfg.qty===1?'stand':'stands'))}</small>`;
+  const sub = k.price*cfg.qty, rate = isTv ? 0 : (cfg.qty>=20?.15:cfg.qty>=10?.10:0), disc=sub*rate;
+  const del = isTv ? 0 : (cfg.qty>=10?0:300);
+  const ledO = LEDS.find(l=>l.c===cfg.led), ledN = L(ledO.n, ledO.a), kn = L(k.name, k.an);
+  const r = $('#receipt');
+  r.innerHTML = `<h4>${L('Gebeta','ገበታ')}</h4><div class="c">${L('Order #0','ትዕዛዝ ቁ. 0')}${orderNo++} · ${L('Addis Ababa','አዲስ አበባ')}<br>${esc(live.name)}</div>
+    <div class="ln"><span>${cfg.qty} × ${kn}${cfg.kind==='led'?' ('+ledN+')':''}</span><span>${fmt(sub)}</span></div>
+    <div class="ln"><span>${isTv?L('Wall mount + setup','የግድግዳ መስቀያ + ገጠማ'):L('QR print with your link','የQR ህትመት ከሊንክዎ ጋር')}</span><span>${L('Included','ተካቷል')}</span></div>
+    <div class="ln"><span>${L('Bulk discount','የጅምላ ቅናሽ')}${rate?' '+rate*100+'%':''}</span><span>${rate?'−'+fmt(disc):'—'}</span></div>
+    <div class="ln"><span>${L('Delivery in Addis','በአዲስ አበባ ማድረስ')}</span><span>${del?fmt(del):L('Free','ነፃ')}</span></div>
+    <hr><div class="ln tot"><span>${L('Total','ጠቅላላ')}</span><span>${fmt(sub-disc+del)} ብር</span></div><hr>
+    <div class="c">Thank you! · እናመሰግናለን!</div>
+    <div class="pay"><b>Telebirr</b><b>CBE Birr</b><b>Chapa</b></div>
+    <div class="bar" aria-hidden="true"></div>`;
+  const pts=[]; const teeth=18; pts.push('0 0','100% 0');
+  for(let i=teeth;i>=0;i--){ pts.push(`${(i/teeth*100).toFixed(2)}% ${i%2?'calc(100% - 12px)':'100%'}`); }
+  r.style.clipPath = `polygon(${pts.join(',')})`;
+  if (!RM){ r.classList.remove('print'); void r.offsetWidth; r.classList.add('print'); }
+}
+
+/* ---- dashboard ---- */
+const scans=[38,42,51,47,72,88,64], top=100;
+$('#chart').innerHTML = [25,50,75].map(v=>`<span class="gl" style="bottom:${v}%"></span>`).join('') + scans.map((v,i)=>`<div class="cb ${v===Math.max(...scans)?'peak':''}"><span>${v}</span><i style="height:${v/top*82}%;animation-delay:${i*.08}s"></i></div>`).join('');
+const chat=$('#chat'); let convo=[];
+const convoFor=()=>[['me','/price macchiato 100'],['bot',L('Done. <b>Macchiato</b> is now <b>100 ብር</b> on 14 tables and your screen.','ተጠናቋል። <b>ማኪያቶ</b> አሁን በ14 ጠረጴዛዎችና በስክሪንዎ ላይ <b>100 ብር</b> ነው።')],['me','/soldout chechebsa'],['bot',L('<b>Chechebsa</b> is sold out until tomorrow morning.','<b>ጨጨብሳ</b> እስከ ነገ ጠዋት አልቋል።')]];
+let ci=0;
+function chatStep(){
+  if(ci>=convo.length){ ci=0; chat.innerHTML=''; }
+  const [w,t]=convo[ci++], m=document.createElement('div'); m.className='msg '+w;
+  if (w==='bot' && !RM){ m.innerHTML='<span class="typing"><i></i><i></i><i></i></span>'; setTimeout(()=>m.innerHTML=t,900); } else m.innerHTML=t;
+  chat.appendChild(m);
+}
+function resetChat(){ convo=convoFor(); ci=0; chat.innerHTML=''; if (RM) convo.forEach(chatStep); else { chatStep(); chatStep(); } }
+if (!RM) setInterval(chatStep, 2600);
+
+/* ---- lead form ---- */
+$('#leadForm').addEventListener('submit', e => { e.preventDefault();
+  $('#leadNote').innerHTML = L(`<b>Got it.</b> In the real product we'd call ${esc($('#leadPhone').value)} to book a visit in ${esc($('#leadArea').value)}. Nothing was sent from this prototype.`,`<b>ደርሶናል።</b> በእውነተኛው አገልግሎት በ${esc($('#leadArea').value)} ጉብኝት ለማስያዝ ወደ ${esc($('#leadPhone').value)} እንደውላለን። ከዚህ ማሳያ ምንም አልተላከም።`); });
+
+/* ---- scroll reveal ---- */
+if ('IntersectionObserver' in window && !RM){
+  const els=$$('.rv'); els.forEach(el=>{ if(el.getBoundingClientRect().top>innerHeight) el.classList.add('pre'); });
+  const io=new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.remove('pre'); io.unobserve(en.target); } }),{rootMargin:'0px 0px -10% 0px'});
+  els.forEach(el=>io.observe(el));
+}
+
+/* ---- site language (English / አማርኛ) ---- */
+const AM = {
+"n1": "የምናሌ ስክሪኖች",
+"n2": "ምናሌ ሰሪ",
+"n3": "መቆሚያዎች",
+"n4": "ዋጋ",
+"n_go": "ይጀምሩ",
+"n5": "ግባ",
+"h_label": "ዲጂታል ምናሌ · የQR መቆሚያ · የምናሌ ስክሪን",
+"h_w1": "ምናሌዎ",
+"h_w2": "በእያንዳንዱ",
+"h_w3": "ጠረጴዛ ላይ።",
+"h_scr": "በአዲስ አበባ",
+"h_am": "Your menu on every table, every phone, every screen.",
+"h_lede": "በአስር ደቂቃ ውስጥ ለካፌዎ በአማርኛና በእንግሊዝኛ ምናሌ ያዘጋጁ። የQR መቆሚያዎችንና የግድግዳ ስክሪኖችን እኛ እናደርሳለን። በስልክዎ ዋጋ ሲቀይሩ በሁሉም ጠረጴዛና ስክሪን ላይ ወዲያው ይቀየራል።",
+"h_cta1": "ምናሌዬን በነፃ ልሥራ",
+"h_cta2": "መቆሚያዎቹን ይመልከቱ",
+"h_ticks": "<span>አማርኛ + እንግሊዝኛ</span><span>የጾም ማጣሪያ</span><span>በቴሌብር ይክፈሉ</span>",
+"h_beya": "በያይነቱ",
+"h_scan": "ይቃኙ፣ ያዙ፣ ይደሰቱ!",
+"l_label": "የምናሌ ስክሪኖች",
+"l_title": "አንድ ምናሌ። <span class=\"mus\">በሁሉም ስክሪን።</span>",
+"l_sub": "የገበታ ስክሪንን ከካውንተሩ ጀርባ ይስቀሉ። ሰሌዳዎችዎን እያፈራረቀ ያሳያል፣ ልዩ ቅናሾችዎን ያስተዋውቃል፤ ዋጋ ሲቀይሩም ወዲያው ይቀይራል።",
+"b_ful": "ስፔሻል ፉል",
+"b_ful_d": "ባቄላ፣ ቲማቲም፣ ሽንኩርት፣ እንቁላልና ትኩስ ዳቦ",
+"b_chech": "ጨጨብሳ",
+"b_chech_d": "ቂጣ በንጥር ቅቤ፣ በበርበሬና በማር",
+"b_firfir": "ጥብስ ፍርፍር",
+"b_firfir_d": "እንጀራ በቅመም ከተጠበሰ ሥጋ ጋር",
+"b_mac": "ማኪያቶ",
+"b_buna": "ጀበና ቡና",
+"b_shai": "ሻይ በቅመም",
+"b_welcome": "እንኳን ደህና መጡ",
+"b_spec": "ስፔሻል ፉል (220 ብር)",
+"b_foot": "ሁልጊዜ ረቡዕና ዓርብ",
+"c_big": "ጥብስ<span>ማክሰኞ</span>",
+"c_sizz": "ትኩስ ትኩሱን!",
+"c_burst": "<b>390</b>ብር ብቻ",
+"c_band": "ሸክላ ጥብስ · ሁልጊዜ ማክሰኞ",
+"l_next": "ቀጣይ ሰሌዳ",
+"l_sync": "<span><b>●</b>ከካውንተሩ ጀርባ ያለው ስክሪን</span><span><b>●</b>14 የጠረጴዛ መቆሚያዎች</span><span><b>●</b>የስልክ ምናሌ</span>",
+"bu_label": "ምናሌ ሰሪውን ይሞክሩ",
+"bu_title": "ምናሌዎን ይሥሩ። <span class=\"red\">አሁኑኑ።</span>",
+"bu_sub": "ይህ ማሳያ በትክክል ይሠራል። የካፌውን ስም ይቀይሩ፣ ዲዛይን ይምረጡ፣ ዋጋ ይቀይሩ፣ ያለቀ ምግብ ምልክት ያድርጉ። ስልኩ ወዲያው ይቀየራል።",
+"bu_script": "ዲዛይነር አያስፈልግም!",
+"bu_cafe": "የእርስዎ ካፌ",
+"bu_s1": "ደረጃ 1",
+"bu_name": "የካፌው ስም",
+"bu_link": "ቋሚ የምናሌ ሊንክ፦",
+"bu_style": "የሰሌዳ ዲዛይን",
+"bu_s2": "ደረጃ 2",
+"bu_fast": "ጾም ብቻ",
+"bu_items": "ምግቦችና ዋጋዎች",
+"bu_birr": "በብር",
+"bu_bd": "መጠጦች +10%",
+"bu_ba": "ሁሉም +10%",
+"bu_reset": "ዋጋዎቹን መልስ",
+"bu_new": "አዲስ ምግብ",
+"bu_ph": "የአቮካዶ ጭማቂ",
+"bu_price": "ዋጋ",
+"bu_sec": "ክፍል",
+"bu_o1": "መጠጦች",
+"bu_o2": "ቁርስ",
+"bu_o3": "ምሳ",
+"bu_add": "ጨምር",
+"bu_nf": "አዲሱ ምግብ ለጾም ተስማሚ ነው",
+"bu_hint": "ቀጥታ ቅድመ እይታ · በስልኩ ውስጥ ያሉትን ቁልፎች ይንኩ",
+"hw_label": "መቆሚያዎችና ስክሪኖች",
+"hw_title": "የሚፈልጉትን <span class=\"mus\">ይምረጡ።</span>",
+"hw_sub": "እያንዳንዱ መቆሚያ ቋሚ የQR ኮድዎን ይይዛል፤ ስለዚህ ዳግመኛ ማሳተም አያስፈልግዎትም። በመላው አዲስ አበባ አድርሰን እንገጥማለን።",
+"hw_led": "የLED ቀለም",
+"hw_bat": "USB-C ባትሪ",
+"hw_note": "ቻርጅ በሚደረግ ባትሪ ስለሚሠራ መብራት ሲጠፋም ማብራቱን ይቀጥላል፤ ከጠረጴዛው አጠገብ ሶኬት አያስፈልገውም።",
+"hw_save": "ከ10 በላይ 10% ቅናሽ",
+"hw_note2": "የናሙና ዋጋዎች። 10 እና ከዚያ በላይ ሲያዙ በአዲስ አበባ ውስጥ ማድረስ ነፃ ነው።",
+"f_burst": "ሁሉም<b>9</b>ተካተዋል",
+"f_title": "በምናሌው <span class=\"mus\">ላይ ያለው</span>",
+"f_script": "የቤቱ ልዩ",
+"f_p1": "ለደንበኞችዎ",
+"f_p2": "ለእርስዎ፣ ለባለቤቱ",
+"f1": "<div class=\"leader\"><span>አማርኛ + እንግሊዝኛ</span><i class=\"dots\"></i><span class=\"price\">ነፃ</span></div><p>በአንድ ንክኪ ቋንቋው ይቀየራል። አማርኛውን ባዶ ቢተዉት እንግሊዝኛው ይታያል።</p>",
+"f2": "<div class=\"leader\"><span>የጾም ማጣሪያ</span><i class=\"dots\"></i><span class=\"price\">ነፃ</span></div><p>የጾም ምግቦችን አንዴ ምልክት ያድርጉ። ረቡዕና ዓርብ እንዲሁም በዐቢይ ጾም ደንበኞች መብላት የሚችሉትን ብቻ ያያሉ።</p>",
+"f3": "<div class=\"leader\"><span>በ3G በፍጥነት ይከፈታል</span><i class=\"dots\"></i><span class=\"price\">ነፃ</span></div><p>እያንዳንዱ ምናሌ ከ100 KB በታች ነው፤ ፎቶዎቹም የተጨመቁ ናቸው። በዝግተኛና በቅድመ ክፍያ ዳታም ይሠራል።</p>",
+"f4": "<div class=\"leader\"><span>አንድ ቋሚ QR</span><i class=\"dots\"></i><span class=\"price\">ነፃ</span></div><p>በመቆሚያዎ ላይ ያለው ኮድ በጭራሽ አይቀየርም። ዳግመኛ ሳያሳትሙ ምናሌዎን ሁልጊዜ ማስተካከል ይችላሉ።</p>",
+"f5": "<div class=\"leader\"><span>ፈጣን የዋጋ ለውጥ</span><i class=\"dots\"></i><span class=\"price\">ካፌ</span></div><p>አንድ ዋጋ ይቀይሩ ወይም አንድን ክፍል በሙሉ በመቶኛ ይጨምሩ። ጠረጴዛዎችና ስክሪኖች በሰከንዶች ውስጥ ይቀየራሉ።</p>",
+"f6": "<div class=\"leader\"><span>በሁለት ንክኪ «አልቋል»</span><i class=\"dots\"></i><span class=\"price\">ነፃ</span></div><p>ከካውንተሩ ጀርባ ሆነው ያለቀ ምግብ ምልክት ያድርጉ። በማግስቱ ጠዋት ተመልሶ ምናሌው ላይ ይወጣል።</p>",
+"f7": "<div class=\"leader\"><span>የቴሌግራም ቦት</span><i class=\"dots\"></i><span class=\"price\">ካፌ</span></div><p><code>/price macchiato 100</code> ብለው ለቦቱ ይላኩ። ምንም መተግበሪያ መጫን አያስፈልግም።</p>",
+"f8": "<div class=\"leader\"><span>የስካን ትንታኔ</span><i class=\"dots\"></i><span class=\"price\">ካፌ</span></div><p>ሳምንታዊ ስካኖች፣ በጣም የሚጨናነቁ ሰዓቶችና በብዛት የታዩ ምግቦች።</p>",
+"f9": "<div class=\"leader\"><span>የሀገር ውስጥ ክፍያ</span><i class=\"dots\"></i><span class=\"price\">ሁልጊዜ</span></div><p>በቴሌብር፣ በሲቢኢ ብር ወይም በቻፓ ይክፈሉ። ሁሉም ዋጋ በብር ነው።</p>",
+"d_label": "የባለቤት ዳሽቦርድ",
+"d_title": "ምን እንደሚሸጥ <span class=\"w\">ይወቁ።</span>",
+"d_scans": "የዚህ ሳምንት የምናሌ ስካኖች",
+"d_ex": "የናሙና መረጃ",
+"d_up": "▲ ካለፈው ሳምንት 18% ብልጫ",
+"d_days": "<span>ሰኞ</span><span>ማክሰኞ</span><span>ረቡዕ</span><span>ሐሙስ</span><span>ዓርብ</span><span>ቅዳሜ</span><span>እሁድ</span>",
+"d_k1": "<small>በብዛት የታየ</small><b>ማኪያቶ</b>",
+"d_k2": "<small>የሚጨናነቅበት ሰዓት</small><b>ከቀኑ 10–11</b>",
+"d_k3": "<small>በአማርኛ ያነበቡ</small><b>61%</b>",
+"d_tg": "የቴሌግራም ቦት",
+"d_exc": "የናሙና ውይይት",
+"d_so": "ዛሬ ያለቁ",
+"d_link": "ከምናሌ ሰሪው ጋር የተገናኘ",
+"p_label": "ዋጋ",
+"p_title": "ጥቅል <span class=\"red\">ይምረጡ።</span>",
+"p_sub": "የናሙና ዋጋዎች በብር። መቆሚያዎችና ስክሪኖች አንድ ጊዜ የሚገዙ ሲሆን ከሁሉም ጥቅሎች ጋር ይሠራሉ።",
+"p1k": "ጥቅል 1",
+"p1h": "ነፃ",
+"p1u": "<li>አንድ ምናሌ፣ እስከ 30 ምግቦች</li><li>የእንጨትና ቀይ ዲዛይን</li><li>አማርኛና እንግሊዝኛ</li><li>በምናሌው ላይ ትንሽ የገበታ ምልክት</li>",
+"p1b": "በነፃ ይጀምሩ",
+"p2burst": "<b>590</b>ብር / በወር",
+"p2k": "ጥቅል 2 · በጣም ተመራጭ",
+"p2h": "ካፌ",
+"p2u": "<li>ያልተገደበ ምግብና ፎቶ</li><li>አራቱም ዲዛይኖች</li><li>የስካን ትንታኔና የቴሌግራም ቦት</li><li>የጅምላ የዋጋ ለውጥ</li><li>የምናሌ ስክሪን ድጋፍ</li>",
+"p2b": "ካፌን ይምረጡ",
+"p3burst": "<b>1,490</b>ብር / በወር",
+"p3k": "የቤተሰብ ገበታ",
+"p3h": "ቡድን",
+"p3u": "<li>እስከ 5 ቅርንጫፎች</li><li>ለእያንዳንዱ ቅርንጫፍ የተለየ ዋጋ</li><li>የሠራተኛ አካውንቶች</li><li>ቡድናችን መጥቶ ያዘጋጅልዎታል</li>",
+"p3b": "ያነጋግሩን",
+"p_with": "የክፍያ አማራጮች",
+"p_bank": "የባንክ ዝውውር",
+"x_label": "ነፃ የሙከራ መቆሚያ",
+"x_title": "ወደ ካፌዎ <span class=\"mus\">እናመጣለን።</span>",
+"x_p": "የት እንዳሉ ይንገሩን። መጥተን ከእርስዎ ጋር ምናሌዎን እናዘጋጃለን፤ ለአንድ ሳምንት የሙከራ መቆሚያ ጠረጴዛ ላይ እንተዋለን።",
+"x_h": "ጉብኝት ይያዙ",
+"x_name": "የካፌው ስም",
+"x_phone": "ስልክ",
+"x_area": "አካባቢ",
+"x_o1": "ቦሌ",
+"x_o2": "ካዛንቺስ",
+"x_o3": "ፒያሳ",
+"x_o4": "ሳርቤት",
+"x_o5": "ሲኤምሲ",
+"x_o6": "መገናኛ",
+"x_o7": "ከአዲስ አበባ ውጭ",
+"x_btn": "ጉብኝት ይጠይቁ",
+"x_note": "ይህ ማሳያ ነው። ቅጹ ገና ምንም አይልክም።",
+"ft1": "ለኢትዮጵያ ካፌዎች ዲጂታል ምናሌ፣ የQR መቆሚያና የምናሌ ስክሪን",
+"ft2": "ገበታ · ማሳያ"
+};
+const EN = {};
+function applyLang(){
+  document.documentElement.lang = LANG;
+  $$('[data-i]').forEach(el => { const k=el.dataset.i; if (!(k in EN)) EN[k]=el.innerHTML; const v = LANG==='am' ? (AM[k] ?? EN[k]) : EN[k]; if (el.innerHTML !== v) el.innerHTML = v; });
+  $$('[data-ip]').forEach(el => { const k='ph:'+el.dataset.ip; if (!(k in EN)) EN[k]=el.placeholder; el.placeholder = LANG==='am' ? (AM[el.dataset.ip] || EN[k]) : EN[k]; });
+  $$('.langsw button').forEach(b => b.setAttribute('aria-pressed', b.dataset.sl===LANG));
+  live.lang = LANG;
+  renderAnnounce(); renderTpls(); renderRows(); renderProdMeta(); tvLabels(); updateCfg(); sync(); resetChat();
+}
+$$('.langsw button').forEach(b => b.addEventListener('click', () => {
+  if (LANG === b.dataset.sl) return;
+  LANG = b.dataset.sl; try { localStorage.setItem('gebeta-lang', LANG); } catch(e) {}
+  applyLang(); toast(L('Switched to English','ወደ አማርኛ ተቀይሯል'));
+}));
+applyLang();
+})();
+</script>
+
+</body>
+</html>
