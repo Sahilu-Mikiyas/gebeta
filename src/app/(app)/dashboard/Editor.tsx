@@ -8,7 +8,7 @@ import type { CafeDTO, CategoryDTO, ItemDTO, MenuDTO } from "@/lib/types";
 import * as A from "./actions";
 
 export type Stats = { days: { key: string; label: string; count: number }[]; total: number; amharicPct: number };
-type Tab = "menu" | "design" | "info" | "qr" | "stats";
+type Tab = "menu" | "design" | "info" | "qr" | "screen" | "stats";
 type Status = "idle" | "saving" | "saved" | "error";
 
 export function Editor({ initial, stats, appUrl, lang }: { initial: MenuDTO; stats: Stats; appUrl: string; lang: Lang }) {
@@ -146,6 +146,7 @@ export function Editor({ initial, stats, appUrl, lang }: { initial: MenuDTO; sta
               ["design", "tabDesign"],
               ["info", "tabInfo"],
               ["qr", "tabQr"],
+              ["screen", "tabScreen"],
               ["stats", "tabStats"],
             ] as [Tab, UIKey][]
           ).map(([id, key]) => (
@@ -215,6 +216,9 @@ export function Editor({ initial, stats, appUrl, lang }: { initial: MenuDTO; sta
                 <p className="sub">{T("standsSub")}</p>
               </section>
             </>
+          ) : null}
+          {tab === "screen" ? (
+            <ScreenTab cafe={menu.cafe} T={T} appUrl={appUrl} onChange={(f) => { patchCafe(f); run(() => A.updateScreen(f)); }} />
           ) : null}
           {tab === "stats" ? (
             <section className="box">
@@ -674,6 +678,55 @@ function InfoTab({
         </form>
         {slugErr ? <p className="err">{T(slugErr)}</p> : null}
         <p className="hint">{T("linkHint")}</p>
+      </section>
+    </>
+  );
+}
+
+// ---------------- screen tab ----------------
+
+function ScreenTab({ cafe, T, appUrl, onChange }: { cafe: CafeDTO; T: (k: UIKey) => string; appUrl: string; onChange: (f: { screenSeconds?: number; screenLang?: string }) => void }) {
+  const url = `${appUrl}/s/${cafe.slug}`;
+  // The preview reloads when settings change so it shows the saved values.
+  const previewKey = `${cafe.template}-${cafe.screenSeconds}-${cafe.screenLang}`;
+  return (
+    <>
+      <section className="box">
+        <h2>{T("screenTitle")}</h2>
+        <p className="sub">{T("screenSub")}</p>
+        <span className="qr-link">{url}</span>
+        <div className="row">
+          <a className="btn red sm" href={`/s/${cafe.slug}`} target="_blank" rel="noreferrer">
+            {T("openScreen")} ↗
+          </a>
+          <span className="hint">{T("screenTip")}</span>
+        </div>
+        <div className="grid2">
+          <label className="f">
+            {T("slideSeconds")}
+            <select className="inp" value={cafe.screenSeconds} onChange={(e) => onChange({ screenSeconds: Number(e.target.value) })}>
+              {[6, 8, 10, 15, 20, 30].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="f">
+            {T("screenLang")}
+            <select className="inp" value={cafe.screenLang} onChange={(e) => onChange({ screenLang: e.target.value })}>
+              <option value="both">{T("langBoth")}</option>
+              <option value="en">{T("langEn")}</option>
+              <option value="am">{T("langAm")}</option>
+            </select>
+          </label>
+        </div>
+      </section>
+      <section className="box">
+        <h3>{T("screenPreview")}</h3>
+        <div className="tv-frame">
+          <iframe key={previewKey} src={`/s/${cafe.slug}?embed=1`} title={T("screenPreview")} loading="lazy" />
+        </div>
       </section>
     </>
   );

@@ -17,6 +17,12 @@ Cafe owners sign up with their phone number, build a bilingual (English/Amharic)
 - **Design:** four board styles (Wood & Red, Mustard, Paper & Orange, Fasting Green).
 - **Public menu at `/m/<slug>`:** English/Amharic switch, fasting-only filter and section jump links. Pages are server-rendered.
 - **QR codes:** PNG (1200 px) and SVG downloads, and a printable A4 sheet of four table cards.
+- **Menu screens for TVs at `/s/<slug>`:** a full-screen 16:9 board that rotates through the menu one section at a time.
+  - long sections are split across boards
+  - shows the cafe's board style and item photos
+  - picks up price and sold-out changes within 30 seconds
+  - keeps the screen awake
+  - owners set seconds per board and the language (English, Amharic or both) in the Menu screen tab
 - **Stats:** scan counts for the last 7 days. Only visits from the QR code (`?src=qr`) are counted.
 - **Owner UI** in English and Amharic.
 - **Marketing page** at `/` (`public/landing.html`).
@@ -56,6 +62,8 @@ npm run build
 | `src/app/(app)/dashboard/Editor.tsx` | The editor UI and live preview |
 | `src/components/MenuView.tsx` | The customer menu, shared by the public page and the preview |
 | `src/app/m/[slug]/` | Public menu page and QR code downloads |
+| `src/app/s/[slug]/` | TV menu screen and the data endpoint it polls |
+| `src/lib/screen.ts` | Splits a menu into TV boards |
 | `src/lib/i18n.ts` | All UI text in English and Amharic |
 
 ## Known limits of this first version
@@ -63,4 +71,4 @@ npm run build
 - Photos are stored in Postgres. Move them to object storage (for example Cloudflare R2) before there are many cafes.
 - Login rate limiting is kept in memory, so it only works with a single server instance.
 - There is no password reset yet. It needs SMS (for example AfroMessage).
-- Not built yet: stand ordering and payments (Telebirr, Chapa), menu screens for TVs, the Telegram bot, and multiple cafes per owner.
+- Not built yet: stand ordering and payments (Telebirr, Chapa), the Telegram bot, and multiple cafes per owner.

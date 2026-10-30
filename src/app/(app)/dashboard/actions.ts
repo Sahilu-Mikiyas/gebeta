@@ -138,6 +138,15 @@ export async function setSlug(slug: string): Promise<{ ok: true; slug: string } 
   return { ok: true, slug: s };
 }
 
+export async function updateScreen(fields: { screenSeconds?: number; screenLang?: string }): Promise<void> {
+  const cafe = await myCafe();
+  const data = z
+    .object({ screenSeconds: z.number().int().min(5).max(60), screenLang: z.enum(["both", "en", "am"]) })
+    .partial()
+    .parse(fields);
+  await prisma.cafe.update({ where: { id: cafe.id }, data });
+}
+
 // ---------- sections ----------
 
 export async function addCategory(nameEn: string, nameAm: string): Promise<MenuDTO> {

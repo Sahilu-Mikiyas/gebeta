@@ -25,6 +25,8 @@ export async function loadMenu(where: { id: string } | { slug: string }): Promis
       hoursAm: cafe.hoursAm,
       template: cafe.template,
       logoId: cafe.logoId,
+      screenSeconds: cafe.screenSeconds,
+      screenLang: cafe.screenLang,
     },
     categories: cafe.categories.map((c) => ({
       id: c.id,

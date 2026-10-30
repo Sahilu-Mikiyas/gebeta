@@ -28,6 +28,9 @@ model Cafe {
   hoursAm    String     @default("")
   template   String     @default("wood")
   logoId     String?
+  // Menu screen (TV) settings
+  screenSeconds Int    @default(10)
+  screenLang    String @default("both") // both | en | am
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   categories Category[]

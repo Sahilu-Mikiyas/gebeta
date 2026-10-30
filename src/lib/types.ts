@@ -28,6 +28,8 @@ export type CafeDTO = {
   hoursAm: string;
   template: string;
   logoId: string | null;
+  screenSeconds: number;
+  screenLang: string;
 };
 
 export type MenuDTO = { cafe: CafeDTO; categories: CategoryDTO[] };
