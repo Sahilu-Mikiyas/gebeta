@@ -1,6 +1,7 @@
 "use client";
 
 import { CountUp, PageHead, useTr } from "@/components/ui";
+import { bouncy, m } from "@/components/motion";
 
 type Props = {
   days: { key: string; label: string; count: number }[];
@@ -25,7 +26,7 @@ function Bars({ values, labels, highlightMax = true }: { values: number[]; label
         {values.map((v, i) => (
           <div key={i} className={`bar${highlightMax && v === max && v > 0 ? " top" : ""}`} style={{ ["--i" as string]: i }}>
             {values.length <= 12 ? <span>{v}</span> : null}
-            <i style={{ height: `${(v / max) * 86}%` }} title={`${labels[i]}: ${v}`} />
+            <m.i initial={{ height: 0 }} whileInView={{ height: `${(v / max) * 86}%` }} viewport={{ once: true }} transition={{ ...bouncy, delay: i * 0.035 }} whileHover={{ scaleX: 1.15 }} title={`${labels[i]}: ${v}`} />
           </div>
         ))}
       </div>
@@ -44,7 +45,7 @@ function Rank({ rows, unit }: { rows: [string, number][]; unit: string }) {
         <li key={name} style={{ ["--i" as string]: i }}>
           <span className="rk">{i + 1}</span>
           <span className="nm">{name}</span>
-          <span className="meter"><i style={{ width: `${(n / max) * 100}%` }} /></span>
+          <span className="meter"><m.i initial={{ width: 0 }} whileInView={{ width: `${(n / max) * 100}%` }} viewport={{ once: true }} transition={{ ...bouncy, delay: 0.1 + i * 0.06 }} /></span>
           <b>{n} {unit}</b>
         </li>
       ))}

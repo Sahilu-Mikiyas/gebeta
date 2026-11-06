@@ -541,3 +541,29 @@ html[lang="am"] .box h2,html[lang="am"] .box h3{font-weight:800;font-synthesis:n
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.001s!important}
 }
+
+/* ---------- motion layer (v2) ---------- */
+.split-word{display:inline-block;white-space:nowrap}
+.split-ch{display:inline-block;will-change:transform}
+.page-head h1{overflow:hidden;padding-bottom:.06em}
+.roll{display:inline-flex;overflow:hidden;vertical-align:bottom}
+.roll > span{display:inline-block}
+.side-link::before{display:none}
+.side-link:hover{color:#fff;background:#1d1a18}
+.side-pill{position:absolute;inset:0;background:var(--mustard);z-index:-1;box-shadow:3px 3px 0 #000}
+.side-link.on{color:var(--ink)}
+.tabbar a.on::after{display:none}
+.tab-pill{position:absolute;top:0;left:22%;right:22%;height:3px;background:var(--mustard)}
+.page{animation:none}
+.kpi{will-change:transform}
+.kpi .spark{display:block;margin:2px 0 -2px}
+.progress i{animation:none;display:block;height:100%;background:var(--green)}
+.bar i{animation:none}
+.meter i{animation:none;display:block;height:100%;background:var(--mustard)}
+.sec{animation:none}
+.toast{animation:none}
+.sheet,.sheet-wrap{animation:none}
+.ticket{will-change:transform}
+.call-chip{animation:ring 1.8s infinite}
+.phone{will-change:transform}
+.fly-dot{position:fixed;width:44px;height:44px;border-radius:50%;background:#d7261e center/cover;border:3px solid #000;z-index:9998;pointer-events:none}

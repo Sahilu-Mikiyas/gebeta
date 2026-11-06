@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LangProvider, ToastProvider, useToast } from "@/components/ui";
+import { MotionRoot } from "@/components/motion";
 import { approvePlan, connectBot, grantPlan, setShopStatus, supportResetCode } from "./actions";
 
 type Props = {
@@ -15,11 +16,13 @@ type Props = {
 
 export function Admin(p: Props) {
   return (
-    <LangProvider lang="en">
-      <ToastProvider>
-        <AdminInner {...p} />
-      </ToastProvider>
-    </LangProvider>
+    <MotionRoot>
+      <LangProvider lang="en">
+        <ToastProvider>
+          <AdminInner {...p} />
+        </ToastProvider>
+      </LangProvider>
+    </MotionRoot>
   );
 }
 

@@ -17,6 +17,8 @@ export default async function TodayPage() {
     prisma.feedback.aggregate({ where: { cafeId: cafe.id, createdAt: { gte: new Date(now - 30 * day) } }, _avg: { rating: true }, _count: true }),
     prisma.scan.count({ where: { cafeId: cafe.id } }),
   ]);
+  const week = await prisma.scan.findMany({ where: { cafeId: cafe.id, at: { gte: new Date(now - 7 * day) } }, select: { at: true } });
+  const spark = Array.from({ length: 7 }, (_, i) => week.filter((s) => s.at.getTime() >= now - (7 - i) * day && s.at.getTime() < now - (6 - i) * day).length);
   const items = menu.categories.flatMap((c) => c.items);
   const checklist = [
     { done: items.length >= 3, en: "Add your menu items", am: "ምግቦችዎን ይጨምሩ", href: "/dashboard/menu" },
@@ -31,6 +33,7 @@ export default async function TodayPage() {
       menu={menu}
       role={role}
       userName={user.name}
+      spark={spark}
       stats={{ scansToday, scansYesterday, orders: ordersToday.length, sales: ordersToday.reduce((s, o) => s + o.total, 0), rating: feedback._avg.rating, reviews: feedback._count }}
       checklist={checklist}
     />

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CountUp, PageHead, Toggle, useToast, useTr } from "@/components/ui";
 import { Icon } from "@/components/Icon";
+import { AnimatePresence, Sparkline, bouncy, m } from "@/components/motion";
 import { pick } from "@/lib/i18n";
 import type { Role } from "@/lib/access";
 import type { MenuDTO } from "@/lib/types";
@@ -16,7 +17,9 @@ export function Today({
   userName,
   stats,
   checklist,
+  spark,
 }: {
+  spark: number[];
   menu: MenuDTO;
   role: Role;
   userName: string;
@@ -64,26 +67,27 @@ export function Today({
       ) : null}
 
       <section className="kpis">
-        <div className="kpi">
+        <m.div className="kpi" whileHover={{ y: -5, rotate: -0.6 }} transition={bouncy}>
           <small>{tr("Menu scans today", "የዛሬ ስካኖች")}</small>
           <b><CountUp value={stats.scansToday} /></b>
+          <Sparkline values={spark} color="#d7261e" />
           {diff !== null ? <em className={diff >= 0 ? "up" : "down"}>{diff >= 0 ? "▲" : "▼"} {Math.abs(diff)}% {tr("vs yesterday", "ከትናንት")}</em> : <em>{tr("Last 24 hours", "ያለፉት 24 ሰዓታት")}</em>}
-        </div>
-        <div className="kpi">
+        </m.div>
+        <m.div className="kpi" whileHover={{ y: -5, rotate: -0.6 }} transition={bouncy}>
           <small>{tr("Table orders", "የጠረጴዛ ትዕዛዞች")}</small>
           <b><CountUp value={stats.orders} /></b>
           <em>{stats.sales ? <><CountUp value={stats.sales} /> {tr("birr", "ብር")}</> : menu.cafe.orderingOn ? tr("None yet today", "ዛሬ ገና የለም") : tr("Ordering is off", "ትዕዛዝ ጠፍቷል")}</em>
-        </div>
-        <div className="kpi">
+        </m.div>
+        <m.div className="kpi" whileHover={{ y: -5, rotate: -0.6 }} transition={bouncy}>
           <small>{tr("Sold out now", "አሁን ያለቁ")}</small>
           <b><CountUp value={soldOutCount} /></b>
           <em>{tr("Back at 6:00 AM", "ጠዋት 12 ሰዓት ይመለሳሉ")}</em>
-        </div>
-        <div className="kpi">
+        </m.div>
+        <m.div className="kpi" whileHover={{ y: -5, rotate: -0.6 }} transition={bouncy}>
           <small>{tr("Rating, 30 days", "ደረጃ፣ 30 ቀናት")}</small>
           <b>{stats.rating ? stats.rating.toFixed(1) : "—"}</b>
           <em>{stats.reviews ? tr(`${stats.reviews} review${stats.reviews === 1 ? "" : "s"}`, `${stats.reviews} አስተያየቶች`) : tr("No reviews yet", "ገና አስተያየት የለም")}</em>
-        </div>
+        </m.div>
       </section>
 
       {done < checklist.length && role !== "staff" ? (
@@ -92,7 +96,7 @@ export function Today({
             <h2>{tr("Finish setting up", "ማዘጋጀቱን ይጨርሱ")}</h2>
             <span className="pill-count">{done}/{checklist.length}</span>
           </div>
-          <div className="progress"><i style={{ width: `${(done / checklist.length) * 100}%` }} /></div>
+          <div className="progress"><m.i initial={{ width: 0 }} animate={{ width: `${(done / checklist.length) * 100}%` }} transition={{ ...bouncy, delay: 0.3 }} /></div>
           <ul className="checklist">
             {checklist.map((c) => (
               <li key={c.en} className={c.done ? "done" : ""}>
@@ -116,11 +120,11 @@ export function Today({
               <div key={c.id} className="quick-sec">
                 <span className="quick-cat">{pick(lang, c.nameEn, c.nameAm)}</span>
                 {c.items.map((i) => (
-                  <div key={i.id} className={`quick-it${i.soldOut ? " out" : ""}`}>
+                  <m.div key={i.id} layout className={`quick-it${i.soldOut ? " out" : ""}`} animate={{ backgroundColor: i.soldOut ? "#fff4f3" : "rgba(255,255,255,0)" }} transition={{ duration: 0.3 }}>
                     {i.photo ? <img src={i.photo} alt="" /> : <span className="ph-dot" />}
                     <span className="nm">{pick(lang, i.nameEn, i.nameAm)}</span>
                     <Toggle tone="red" big checked={i.soldOut} onChange={(v) => flip(i.id, v, i.nameEn)} label={i.soldOut ? tr("Sold out", "አልቋል") : tr("Available", "አለ")} />
-                  </div>
+                  </m.div>
                 ))}
               </div>
             ))}

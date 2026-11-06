@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { MenuView } from "@/components/MenuView";
 import { ConfirmButton, Field, PageHead, PriceField, Sheet, Toggle, uploadPhoto, useToast, useTr } from "@/components/ui";
 import { Icon } from "@/components/Icon";
+import { AnimatePresence, LayoutGroup, bouncy, m, soft } from "@/components/motion";
 import { pick, type Lang } from "@/lib/i18n";
 import { PHOTO_LIBRARY } from "@/lib/library";
 import type { CategoryDTO, ItemDTO, MenuDTO, Option } from "@/lib/types";
@@ -109,8 +110,10 @@ export function MenuEditor({ initial, itemLimit }: { initial: MenuDTO; itemLimit
 
         {cats.length === 0 ? <p className="box empty">{tr("Your menu is empty. Add a section, like “Coffee & tea”, to start.", "ምናሌዎ ባዶ ነው። ለመጀመር እንደ «ቡና እና ሻይ» ያለ ክፍል ይጨምሩ።")}</p> : null}
 
+        <LayoutGroup>
+        <AnimatePresence initial={false}>
         {cats.map((c, ci) => (
-          <section key={c.id} className="sec">
+          <m.section key={c.id} className="sec" layout initial={{ opacity: 0, y: 30, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.9, height: 0, marginTop: 0 }} transition={soft}>
             <div className="sec-h">
               <label className="f">
                 {tr("Section (English)", "ክፍል (እንግሊዝኛ)")}
@@ -129,6 +132,7 @@ export function MenuEditor({ initial, itemLimit }: { initial: MenuDTO; itemLimit
             </div>
             <div className="items">
               {c.items.length === 0 ? <p className="empty">{tr("No items in this section yet.", "በዚህ ክፍል ገና ምግብ የለም።")}</p> : null}
+              <AnimatePresence initial={false}>
               {c.items.map((it, ii) => (
                 <ItemRow
                   key={it.id}
@@ -144,10 +148,13 @@ export function MenuEditor({ initial, itemLimit }: { initial: MenuDTO; itemLimit
                   onMore={() => setOpen(it.id)}
                 />
               ))}
+              </AnimatePresence>
             </div>
             <AddItemRow categoryId={c.id} structural={structural} />
-          </section>
+          </m.section>
         ))}
+        </AnimatePresence>
+        </LayoutGroup>
 
         <section className="box">
           <h3>{tr("Add section", "ክፍል ጨምር")}</h3>
@@ -170,12 +177,12 @@ export function MenuEditor({ initial, itemLimit }: { initial: MenuDTO; itemLimit
       </div>
 
       <aside className="preview-col" aria-label={tr("Preview", "ቅድመ እይታ")}>
-        <div className="phone float-in">
+        <m.div className="phone" initial={{ opacity: 0, y: 40, rotate: 3 }} animate={{ opacity: 1, y: 0, rotate: 0 }} transition={{ ...bouncy, delay: 0.15 }} whileHover={{ rotate: -1, y: -4 }}>
           <div className="notch" />
           <div className="scr">
             <MenuView cafe={menu.cafe} categories={menu.categories.map((c) => ({ ...c, items: c.items.filter((i) => !i.hidden) }))} lang={pLang} fastOnly={pFast} controls={{ kind: "buttons", onLang: setPLang, onFast: () => setPFast((f) => !f) }} />
           </div>
-        </div>
+        </m.div>
         <span className="hint">{tr("Live preview", "ቀጥታ ቅድመ እይታ")}</span>
       </aside>
 
@@ -213,7 +220,7 @@ function ItemRow({ item, first, last, uploading, onLive, onSave, onSoldOut, onUp
   const { tr } = useTr();
   const fileRef = useRef<HTMLInputElement>(null);
   return (
-    <div className={`it${item.soldOut ? " out" : ""}${item.hidden ? " hid" : ""}`}>
+    <m.div layout="position" className={`it${item.soldOut ? " out" : ""}${item.hidden ? " hid" : ""}`} initial={{ opacity: 0, x: -30, backgroundColor: "#fff3c4" }} animate={{ opacity: 1, x: 0, backgroundColor: item.soldOut ? "#fff4f3" : "#ffffff" }} exit={{ opacity: 0, x: 60, height: 0, paddingTop: 0, paddingBottom: 0 }} transition={bouncy}>
       <button type="button" className="ph" onClick={() => fileRef.current?.click()} aria-label={tr("Photo", "ፎቶ")} disabled={uploading}>
         {uploading ? <span className="spin" /> : item.photo ? <img src={item.photo} alt="" /> : <><Icon name="camera" /><small>{tr("Photo", "ፎቶ")}</small></>}
       </button>
@@ -241,7 +248,7 @@ function ItemRow({ item, first, last, uploading, onLive, onSave, onSoldOut, onUp
           <button className="icon-btn sm" type="button" disabled={last} aria-label={tr("Move down", "ወደ ታች")} onClick={() => onMove(1)}><Icon name="down" size={16} /></button>
         </span>
       </div>
-    </div>
+    </m.div>
   );
 }
 

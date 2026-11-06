@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type InputHTMLAttributes, type ReactNode } from "react";
 import type { Lang } from "@/lib/i18n";
+import { AnimatePresence, SplitTitle, bouncy, m } from "./motion";
 
 // ---------- language ----------
 
@@ -62,16 +63,18 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastCtx.Provider value={{ toast, run, status }}>
       {children}
       <div className="toasts" aria-live="polite">
+        <AnimatePresence initial={false}>
         {toasts.map((t) => (
-          <div key={t.id} className={`toast${t.bad ? " bad" : ""}`} role="status">
+          <m.div key={t.id} layout className={`toast${t.bad ? " bad" : ""}`} role="status" initial={{ opacity: 0, y: 40, scale: 0.8 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, x: 80, transition: { duration: 0.2 } }} transition={bouncy}>
             <span>{t.msg}</span>
             {t.action ? (
               <button type="button" onClick={() => { t.action!.run(); setToasts((x) => x.filter((y) => y.id !== t.id)); }}>
                 {t.action.label}
               </button>
             ) : null}
-          </div>
+          </m.div>
         ))}
+        </AnimatePresence>
       </div>
     </ToastCtx.Provider>
   );
@@ -237,9 +240,9 @@ export function PageHead({ title, sub, kicker, children }: { title: ReactNode; s
   return (
     <header className="page-head">
       <div>
-        {kicker ? <span className="kicker">{kicker}</span> : null}
-        <h1>{title}</h1>
-        {sub ? <p>{sub}</p> : null}
+        {kicker ? <m.span className="kicker" initial={{ opacity: 0, x: -20, rotate: -3 }} animate={{ opacity: 1, x: 0, rotate: -1.5 }} transition={bouncy}>{kicker}</m.span> : null}
+        <h1>{typeof title === "string" ? <SplitTitle text={title} /> : title}</h1>
+        {sub ? <m.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>{sub}</m.p> : null}
       </div>
       {children ? <div className="page-actions">{children}</div> : null}
     </header>
@@ -253,10 +256,11 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
-  if (!open) return null;
   return (
-    <div className="sheet-wrap" onClick={onClose}>
-      <div className="sheet" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+    <AnimatePresence>
+      {open ? (
+    <m.div className="sheet-wrap" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+      <m.div className="sheet" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()} initial={{ y: 80, opacity: 0, scale: 0.96 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 60, opacity: 0, scale: 0.97 }} transition={bouncy}>
         <div className="sheet-h">
           <h3>{title}</h3>
           <button type="button" className="x" onClick={onClose} aria-label="Close">
@@ -264,7 +268,9 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
           </button>
         </div>
         <div className="sheet-b">{children}</div>
-      </div>
-    </div>
+      </m.div>
+    </m.div>
+      ) : null}
+    </AnimatePresence>
   );
 }

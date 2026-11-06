@@ -13,7 +13,7 @@
 .pm[lang="am"] .pm-tab small{letter-spacing:0;font-size:12px}
 .pm-tab b{font:400 38px/1.05 'Anton','Noto Sans Ethiopic',Impact,sans-serif;text-transform:uppercase;letter-spacing:.02em;max-width:100%;overflow-wrap:anywhere}
 .pm[lang="am"] .pm-tab b{font-weight:800;font-synthesis:none;font-size:32px}
-.pm-tab span{font:400 19px/1.1 'Kaushan Script','Noto Sans Ethiopic',cursive;max-width:100%}
+.pm-tab > span{font:400 19px/1.1 'Kaushan Script','Noto Sans Ethiopic',cursive;max-width:100%}
 .pm-meta{text-align:center;font:600 13px/1.4 'Barlow Condensed','Noto Sans Ethiopic',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:12px 0 0}
 .pm-chips{display:flex;gap:8px;justify-content:center;margin:16px 0 4px;flex-wrap:wrap}
 .pm-chip{font:700 13px/1 'Barlow Condensed','Noto Sans Ethiopic',sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:9px 13px;
@@ -163,3 +163,62 @@ button.pm-it:active{transform:scale(.985)}
 .stars button.on{color:#f5b700;transform:scale(1.12) rotate(-6deg)}
 .pm-toast{position:fixed;left:50%;top:max(14px, env(safe-area-inset-top));transform:translateX(-50%);z-index:80;background:#f5b700;color:#0b0a0a;border:3px solid #000;box-shadow:4px 4px 0 #000;padding:10px 16px;font:800 14px/1.25 'Barlow Condensed','Noto Sans Ethiopic',sans-serif;text-transform:uppercase;letter-spacing:.04em;max-width:calc(100% - 28px);text-align:center;animation:pm-pop .45s cubic-bezier(.3,1.5,.5,1) both}
 @media (prefers-reduced-motion:reduce){.pm *,.pm-sheet,.pm-dock,.pm-toast{animation:none!important;transition:none!important}}
+
+/* ---------- motion layer (v2) ---------- */
+.pm-tab,.pm-it{animation:none}
+.split-word{display:inline-block;white-space:nowrap}
+.split-ch{display:inline-block;will-change:transform}
+.roll{display:inline-flex;overflow:hidden;vertical-align:bottom;line-height:1.15}
+.roll > span{display:inline-block}
+.pm-progress{position:fixed;left:0;right:0;top:0;height:4px;background:var(--acc,#f5b700);transform-origin:left;z-index:70}
+.pm.live .pm-tab{position:relative;z-index:2}
+.pm-cover{height:240px;margin:0 -18px -70px;overflow:hidden;border-bottom:3px solid #000;position:relative}
+.pm-cover-img{position:absolute;inset:-30px 0 0;background:center/cover no-repeat}
+.pm-cover::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.18)}
+.pm-jump{gap:8px;padding:10px 18px;border-bottom:2px solid color-mix(in srgb, var(--ink) 15%, transparent)}
+.pm-jump a{position:relative;border:0;padding:8px 13px;opacity:1;isolation:isolate;transition:color .2s}
+.pm-jump a span{position:relative;z-index:1}
+.pm-jump a.on{color:var(--pillInk)}
+.pm-jump-pill{position:absolute;inset:0;background:var(--pill);border-radius:99px;z-index:0}
+.pm-it{border-radius:4px}
+.pm-it.has-ph{padding:10px 6px}
+.pm-ph-wrap{position:relative;flex-shrink:0}
+.pm-ph{width:78px;height:78px;border-width:2.5px;box-shadow:3px 3px 0 #000}
+.pm-qty{position:absolute;top:-8px;right:-8px;min-width:24px;height:24px;border-radius:12px;background:var(--acc);color:#0b0a0a;border:2px solid #000;display:grid;place-items:center;font:800 13px/1 'Barlow Condensed',sans-serif;padding:0 5px}
+.pm-qty.inline{position:static;display:inline-grid}
+.pm-copy{margin-left:6px;font:800 11px/1 'Barlow Condensed',sans-serif;letter-spacing:.08em;text-transform:uppercase;background:var(--ink);color:var(--bg);border:0;padding:5px 8px;cursor:pointer;display:inline-flex;overflow:hidden}
+.pm-clear{background:none;border:0;color:var(--ink);font-size:14px;cursor:pointer;padding:4px}
+.pm-table{display:flex;align-items:center;justify-content:center;gap:8px}
+.pm-table-n{width:30px;height:30px;border-radius:50%;background:var(--acc);color:#0b0a0a;display:grid;place-items:center;font:400 16px/1 'Anton',Impact,sans-serif;border:2px solid #000}
+.pm-chip.big{font-size:14px;padding:12px 18px}
+.pm-grab-zone{touch-action:none;cursor:grab;margin:-10px -18px 0;padding:10px 18px 0}
+.pm-grab-zone:active{cursor:grabbing}
+.pm-hero{margin:0 -18px 14px;width:calc(100% + 36px);animation:none}
+.pm-detail h3{margin-top:2px}
+.pm-opts label{position:relative;isolation:isolate;overflow:hidden}
+.pm-opts label.on{transform:none;background:#fff}
+.opt-bg{position:absolute;inset:0;background:#fff3c4;z-index:-1}
+.pm-cart li{animation:none}
+.pm-cart-ph{width:46px;height:46px;object-fit:cover;border:2px solid #000;flex-shrink:0}
+.pm-total b,.pm-cart .lt,.dock-total{display:inline-flex;gap:4px;align-items:baseline}
+.dock-btn.cart{justify-content:space-between}
+.dock-total{font-size:15px}
+.dock-btn .ring{flex-shrink:0}
+.stars-label{text-align:center;margin:0 0 6px;font:800 15px/1 'Barlow Condensed','Noto Sans Ethiopic',sans-serif;text-transform:uppercase;letter-spacing:.06em;color:#d7261e}
+.pm-dots{display:inline-flex;gap:5px}
+.pm-dots i{width:8px;height:8px;border-radius:50%;background:currentColor;animation:pm-dot 1s infinite}
+.pm-dots i:nth-child(2){animation-delay:.15s}.pm-dots i:nth-child(3){animation-delay:.3s}
+@keyframes pm-dot{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-5px);opacity:1}}
+.pm-success{position:fixed;inset:0;z-index:90;background:rgba(11,10,10,.6);display:grid;place-items:center;padding:24px}
+.pm-success-card{background:#fbf6ec;border:4px solid #000;box-shadow:10px 10px 0 #000;padding:30px 34px;display:grid;justify-items:center;gap:10px;text-align:center;max-width:340px}
+.pm-success-card b{font:400 64px/1 'Anton',Impact,sans-serif;color:#0b0a0a}
+.pm-success-card p{margin:0;font:800 20px/1.1 'Barlow Condensed','Noto Sans Ethiopic',sans-serif;text-transform:uppercase;letter-spacing:.04em}
+.pm-success-card small{color:#6b625a;font-size:13px}
+.pm-calling{position:fixed;left:50%;top:max(16px, env(safe-area-inset-top));translate:-50% 0;z-index:85;display:flex;gap:12px;align-items:center;background:#0b0a0a;color:#f5b700;border:3px solid #000;box-shadow:5px 5px 0 rgba(0,0,0,.4);padding:12px 18px;font:800 15px/1.2 'Barlow Condensed','Noto Sans Ethiopic',sans-serif;text-transform:uppercase;letter-spacing:.04em;width:max-content;max-width:calc(100% - 28px)}
+.pm-calling .bell{display:inline-grid;transform-origin:50% 10%}
+.pm-toast{animation:none;translate:-50% 0;left:50%;transform:none}
+.cart-anchor{position:fixed;right:40px;bottom:40px;width:1px;height:1px;pointer-events:none}
+.fly-dot{position:fixed;width:44px;height:44px;border-radius:50%;background:#d7261e center/cover;border:3px solid #000;box-shadow:3px 3px 0 #000;z-index:9998;pointer-events:none}
+.pm-dock{animation:none;left:0;right:0;margin:0 auto;transform:none}
+.pm-order-status{animation:none;overflow:hidden}
+.pm-order-status .steps i{display:block;transform-origin:left}

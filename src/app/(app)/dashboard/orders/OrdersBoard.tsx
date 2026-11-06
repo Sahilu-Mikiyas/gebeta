@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { PageHead, useToast, useTr } from "@/components/ui";
 import { Icon } from "@/components/Icon";
+import { AnimatePresence, LayoutGroup, bouncy, m } from "@/components/motion";
 import { doneCall, setOrderStatus } from "../more-actions";
 import { ago, useLiveFeed } from "./LiveFeed";
 
@@ -68,17 +69,20 @@ export function OrdersBoard({ orderingOn, callsOn, tables }: { orderingOn: boole
 
       {feed && feed.calls.length ? (
         <section className="calls-strip">
+          <AnimatePresence initial={false}>
           {feed.calls.map((c) => (
-            <button key={c.id} type="button" className={`call-chip ${c.kind}${fresh.has(c.id) ? " fresh" : ""}`} onClick={() => act(() => doneCall(c.id))}>
+            <m.button key={c.id} layout type="button" className={`call-chip ${c.kind}`} onClick={() => act(() => doneCall(c.id))} initial={{ opacity: 0, scale: 0.4, y: -30 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.5, y: 30 }} transition={bouncy} whileTap={{ scale: 0.92 }}>
               <Icon name={c.kind === "bill" ? "bill" : "bell"} />
               <b>{tr(`Table ${c.table}`, `ጠረጴዛ ${c.table}`)}</b>
               <span>{c.kind === "bill" ? tr("Bill", "ሂሳብ") : tr("Waiter", "አስተናጋጅ")} · {ago(feed.now - new Date(c.createdAt).getTime(), tr)}</span>
               <em>{tr("Tap when done", "ሲጨርሱ ይንኩ")}</em>
-            </button>
+            </m.button>
           ))}
+          </AnimatePresence>
         </section>
       ) : null}
 
+      <LayoutGroup>
       <div className="kanban">
         {COLS.map((col) => {
           const list = feed ? feed.orders.filter((o) => o.status === col.id).sort((a, b) => +new Date(a.createdAt) - +new Date(b.createdAt)) : [];
@@ -88,8 +92,9 @@ export function OrdersBoard({ orderingOn, callsOn, tables }: { orderingOn: boole
                 {tr(col.en, col.am)} <span className="pill-count">{list.length}</span>
               </h2>
               {list.length === 0 ? <p className="empty">{feed ? "—" : tr("Loading…", "በመጫን ላይ…")}</p> : null}
+              <AnimatePresence initial={false}>
               {list.map((o) => (
-                <article key={o.id} className={`ticket${fresh.has(o.id) ? " fresh" : ""}`}>
+                <m.article key={o.id} layoutId={`t-${o.id}`} className={`ticket${fresh.has(o.id) ? " fresh" : ""}`} initial={{ opacity: 0, scale: 0.7, rotate: -4 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} exit={{ opacity: 0, scale: 0.6, rotate: 6, transition: { duration: 0.25 } }} transition={bouncy}>
                   <header>
                     <b>#{o.number}</b>
                     <span className="tk-table">{tr(`Table ${o.table}`, `ጠረጴዛ ${o.table}`)}</span>
@@ -126,12 +131,14 @@ export function OrdersBoard({ orderingOn, callsOn, tables }: { orderingOn: boole
                       <button className="btn sm red" type="button" onClick={() => setPayFor(o.id)}>{tr("Mark paid", "ተከፍሏል")}</button>
                     )}
                   </footer>
-                </article>
+                </m.article>
               ))}
+              </AnimatePresence>
             </section>
           );
         })}
       </div>
+      </LayoutGroup>
 
       {paidToday.length ? (
         <section className="box">

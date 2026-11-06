@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useToast, useTr } from "@/components/ui";
 import { Icon } from "@/components/Icon";
+import { AnimatePresence, bouncy, m } from "@/components/motion";
 import { doneCall, liveFeed, setOrderStatus } from "../more-actions";
 
 type Feed = Awaited<ReturnType<typeof liveFeed>>;
@@ -71,8 +72,9 @@ export function LiveFeed({ compact }: { compact?: boolean }) {
   if (!feed.calls.length && !open.length) return <p className="empty">{tr("All quiet. New orders and waiter calls appear here, with a sound.", "ጸጥ ብሏል። አዳዲስ ትዕዛዞችና ጥሪዎች በድምፅ እዚህ ይታያሉ።")}</p>;
   return (
     <ul className="live-list">
+      <AnimatePresence initial={false}>
       {feed.calls.map((c) => (
-        <li key={c.id} className={`live-call ${c.kind}${fresh.has(c.id) ? " fresh" : ""}`}>
+        <m.li key={c.id} layout className={`live-call ${c.kind}${fresh.has(c.id) ? " fresh" : ""}`} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={bouncy}>
           <Icon name={c.kind === "bill" ? "bill" : "bell"} />
           <span>
             <b>{tr(`Table ${c.table}`, `ጠረጴዛ ${c.table}`)}</b> {c.kind === "bill" ? tr("wants the bill", "ሂሳብ ይፈልጋል") : tr("is calling a waiter", "አስተናጋጅ ይጠራል")}
@@ -81,10 +83,10 @@ export function LiveFeed({ compact }: { compact?: boolean }) {
           <button className="btn sm" type="button" onClick={async () => { const f = await run(() => doneCall(c.id)); if (f) setFeed(f); }}>
             {tr("Done", "ተሠርቷል")}
           </button>
-        </li>
+        </m.li>
       ))}
       {open.slice(0, compact ? 4 : 50).map((o) => (
-        <li key={o.id} className={`live-order ${o.status}${fresh.has(o.id) ? " fresh" : ""}`}>
+        <m.li key={o.id} layout className={`live-order ${o.status}${fresh.has(o.id) ? " fresh" : ""}`} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={bouncy}>
           <Icon name="orders" />
           <span>
             <b>#{o.number} · {tr(`Table ${o.table}`, `ጠረጴዛ ${o.table}`)}</b> {o.lines.reduce((n, l) => n + l.qty, 0)} {tr("items", "ዓይነት")} · {o.total.toLocaleString("en-US")} {tr("birr", "ብር")}
@@ -93,8 +95,9 @@ export function LiveFeed({ compact }: { compact?: boolean }) {
           <button className="btn sm mus" type="button" onClick={async () => { const f = await run(() => setOrderStatus(o.id, o.status === "new" ? "preparing" : "served")); if (f) setFeed(f); }}>
             {o.status === "new" ? tr("Start", "ጀምር") : tr("Served", "ቀርቧል")}
           </button>
-        </li>
+        </m.li>
       ))}
+      </AnimatePresence>
     </ul>
   );
 }

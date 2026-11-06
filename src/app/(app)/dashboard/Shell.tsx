@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { LangProvider, ToastProvider, useToast } from "@/components/ui";
+import { AnimatePresence, MotionRoot, bouncy, m, soft } from "@/components/motion";
 import type { Lang } from "@/lib/i18n";
 import type { Role } from "@/lib/access";
 import { switchCafe } from "./actions";
@@ -63,11 +64,13 @@ export function Shell(props: {
   children: ReactNode;
 }) {
   return (
-    <LangProvider lang={props.lang}>
-      <ToastProvider>
-        <ShellInner {...props} />
-      </ToastProvider>
-    </LangProvider>
+    <MotionRoot>
+      <LangProvider lang={props.lang}>
+        <ToastProvider>
+          <ShellInner {...props} />
+        </ToastProvider>
+      </LangProvider>
+    </MotionRoot>
   );
 }
 
@@ -98,9 +101,10 @@ function ShellInner({ lang, role, user, cafe, cafes, badges, admin, children }: 
           <span className="side-label">{tr(g.en, g.am)}</span>
           {g.items.map((i) => (
             <Link key={i.href} href={i.href} className={`side-link${isActive(i.href) ? " on" : ""}`} prefetch>
+              {isActive(i.href) ? <m.i className="side-pill" layoutId="side-pill" transition={bouncy} /> : null}
               <Icon name={i.icon} className="ic" />
               <span>{tr(i.en, i.am)}</span>
-              {i.badge && badges.orders ? <b className="badge pop">{badges.orders}</b> : null}
+              <AnimatePresence>{i.badge && badges.orders ? <m.b key={badges.orders} className="badge" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} transition={bouncy}>{badges.orders}</m.b> : null}</AnimatePresence>
             </Link>
           ))}
         </div>
@@ -168,7 +172,7 @@ function ShellInner({ lang, role, user, cafe, cafes, badges, admin, children }: 
           </div>
         </div>
       </aside>
-      {drawer ? <div className="scrim" onClick={() => setDrawer(false)} /> : null}
+      <AnimatePresence>{drawer ? <m.div className="scrim" onClick={() => setDrawer(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} /> : null}</AnimatePresence>
 
       <div className="main">
         <div className="topbar">
@@ -179,20 +183,23 @@ function ShellInner({ lang, role, user, cafe, cafes, badges, admin, children }: 
           </button>
           <span className="top-cafe only-mobile">{cafe.nameEn}</span>
           <span className={`save-status ${status}`} role="status" aria-live="polite">
-            {statusText}
+            <AnimatePresence mode="wait" initial={false}>
+              <m.span key={status} initial={{ y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -8, opacity: 0 }} transition={{ duration: 0.16 }}>{statusText}</m.span>
+            </AnimatePresence>
           </span>
           <a className="btn sm ink" href={`/m/${cafe.slug}`} target="_blank" rel="noreferrer">
             {tr("Live menu", "ምናሌውን ክፈት")} ↗
           </a>
         </div>
-        <div className="page" key={path}>
+        <m.div className="page" key={path} initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={soft}>
           {children}
-        </div>
+        </m.div>
       </div>
 
       <nav className="tabbar only-mobile" aria-label={tr("Quick links", "ፈጣን ሊንኮች")}>
         {tabs.map((i) => (
           <Link key={i.href} href={i.href} className={isActive(i.href) ? "on" : ""}>
+            {isActive(i.href) ? <m.i className="tab-pill" layoutId="tab-pill" transition={bouncy} /> : null}
             <Icon name={i.icon} className="ic" />
             <span>{tr(i.en, i.am)}</span>
             {i.badge && badges.orders ? <b className="badge">{badges.orders}</b> : null}

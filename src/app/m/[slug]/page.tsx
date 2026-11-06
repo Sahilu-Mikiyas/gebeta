@@ -37,7 +37,7 @@ export default async function PublicMenuPage({ params, searchParams }: Params) {
   return (
     <main className="pm-page" data-t={menu.cafe.template}>
       {/* Only the two Latin display faces load here; Ethiopic uses the phone's built-in font. */}
-      <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@700;800&display=swap" />
+      <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@700;800&family=Kaushan+Script&display=swap" />
       <title>{`${pick(lang, menu.cafe.nameEn, menu.cafe.nameAm)} · Menu`}</title>
       <PublicMenu menu={menu} initialLang={lang} initialFast={sp.fast === "1"} table={table} />
     </main>
