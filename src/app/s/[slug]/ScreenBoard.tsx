@@ -12,9 +12,23 @@ export function ScreenBoard({ initial, slug, embed }: { initial: MenuDTO; slug: 
   const [index, setIndex] = useState(0);
   const [wiping, setWiping] = useState(false);
   const [hint, setHint] = useState(!embed);
-  const slides = useMemo(() => buildSlides(menu.categories), [menu.categories]);
+  const portrait = menu.cafe.screenPortrait;
+  // Menu boards, with one promo image after every two boards.
+  const slides = useMemo(() => {
+    const boards: ({ kind: "board"; slide: Slide } | { kind: "promo"; imageId: string })[] = buildSlides(menu.categories, portrait ? 10 : 8).map((s) => ({ kind: "board", slide: s }));
+    const promos = menu.cafe.slides;
+    if (!promos.length) return boards;
+    const out: typeof boards = [];
+    let p = 0;
+    boards.forEach((b, i) => {
+      out.push(b);
+      if (i % 2 === 1) out.push({ kind: "promo", imageId: promos[p++ % promos.length] });
+    });
+    if (boards.length < 2) promos.forEach((id) => out.push({ kind: "promo", imageId: id }));
+    return out;
+  }, [menu.categories, menu.cafe.slides, portrait]);
   const seconds = Math.max(5, menu.cafe.screenSeconds || 10);
-  const slide = slides.length ? slides[index % slides.length] : null;
+  const current = slides.length ? slides[index % slides.length] : null;
 
   // Pick up menu changes from the dashboard.
   useEffect(() => {
@@ -73,9 +87,14 @@ export function ScreenBoard({ initial, slug, embed }: { initial: MenuDTO; slug: 
 
   return (
     <main className={`scr-root${embed ? " embed" : ""}`} onClick={goFull}>
-      <div className="scr-stage" data-t={menu.cafe.template}>
-        {slide ? (
-          <Board key={slide.key + index} slide={slide} menu={menu} seconds={seconds} animate={slides.length > 1} />
+      <div className={`scr-stage${portrait ? " portrait" : ""}`} data-t={menu.cafe.template} style={{ ...(menu.cafe.brandColor ? { ["--pill" as string]: menu.cafe.brandColor } : {}), ...(menu.cafe.accentColor ? { ["--acc" as string]: menu.cafe.accentColor } : {}) }}>
+        {current?.kind === "promo" ? (
+          <div className="scr-promo" key={`p${index}`}>
+            <img src={`/media/${current.imageId}`} alt="" />
+            {slides.length > 1 ? <i className="scr-progress" style={{ animationDuration: `${seconds}s` }} /> : null}
+          </div>
+        ) : current ? (
+          <Board key={current.slide.key + index} slide={current.slide} menu={menu} seconds={seconds} animate={slides.length > 1} />
         ) : (
           <div className="scr-empty">
             <b>{menu.cafe.nameEn}</b>
@@ -124,7 +143,7 @@ function Board({ slide, menu, seconds, animate }: { slide: Slide; menu: MenuDTO;
                   {i.soldOut ? <span className="tg out">{mode === "am" ? "አልቋል" : "Sold out"}</span> : null}
                 </span>
                 <i className="dots" />
-                <span className="price">{formatBirr(i.price)}</span>
+                <span className="price">{i.special ? <s>{formatBirr(i.price)}</s> : null}{formatBirr(i.special ? i.special.price : i.price)}</span>
               </div>
               {!dense && desc ? <p>{desc}</p> : null}
             </div>
@@ -141,9 +160,9 @@ function Board({ slide, menu, seconds, animate }: { slide: Slide; menu: MenuDTO;
         </div>
         {f ? (
           <figure className="scr-feature">
-            <img src={`/media/${f.imageId}`} alt="" />
+            <img src={f.photo ?? `/media/${f.imageId}`} alt="" />
             <figcaption>
-              {nameOf(f.nameEn, f.nameAm)} · {formatBirr(f.price)} {mode === "en" ? "birr" : "ብር"}
+              {nameOf(f.nameEn, f.nameAm)} · {formatBirr(f.special ? f.special.price : f.price)} {mode === "en" ? "birr" : "ብር"}
             </figcaption>
           </figure>
         ) : (
@@ -158,6 +177,7 @@ function Board({ slide, menu, seconds, animate }: { slide: Slide; menu: MenuDTO;
         <span>{mode === "en" ? "Scan the QR on your table for the full menu" : mode === "am" ? "ሙሉውን ምናሌ ለማየት በጠረጴዛዎ ያለውን QR ይቃኙ" : "Scan the QR on your table · በጠረጴዛዎ ያለውን QR ይቃኙ"}</span>
         {animate ? <i className="scr-progress" style={{ animationDuration: `${seconds}s` }} /> : null}
       </footer>
+      {cafe.plan === "free" ? <span className="scr-label">Gebeta</span> : null}
     </div>
   );
 }

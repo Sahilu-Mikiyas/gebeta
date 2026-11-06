@@ -1,7 +1,7 @@
 import QRCode from "qrcode";
 
-export function menuUrl(appUrl: string, slug: string): string {
-  return `${appUrl.replace(/\/$/, "")}/m/${slug}?src=qr`;
+export function menuUrl(appUrl: string, slug: string, table?: string | number): string {
+  return `${appUrl.replace(/\/$/, "")}/m/${slug}?src=qr${table ? `&t=${table}` : ""}`;
 }
 
 export function qrSvg(url: string): Promise<string> {

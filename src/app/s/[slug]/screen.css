@@ -73,3 +73,27 @@
 .scr-empty span{font:700 2cqw/1.2 'Barlow Condensed','Noto Sans Ethiopic',sans-serif}
 .scr-hint{position:fixed;left:50%;top:4vh;transform:translateX(-50%);background:#f5b700;color:#000;border:3px solid #000;padding:12px 18px;font:700 18px/1.2 'Barlow Condensed','Noto Sans Ethiopic',sans-serif;letter-spacing:.06em;text-transform:uppercase;z-index:10}
 @media (prefers-reduced-motion:reduce){.scr-board,.scr-feature img,.scr-progress{animation:none}.scr-wipe.go{animation-duration:.01s}}
+
+/* Portrait screens: 9:16, menu on top, photo below */
+.scr-stage.portrait{width:min(100vw, 56.25vh);aspect-ratio:9/16}
+.scr-stage.portrait .scr-board{grid-template-columns:1fr;grid-template-rows:1fr auto;padding:20cqw 6cqw 12cqw}
+.scr-stage.portrait .scr-tab{position:absolute;top:0;left:50%;transform:translateX(-50%);width:48cqw;min-height:16cqw;padding:4cqw 3cqw;border-radius:0 0 24cqw 24cqw}
+.scr-stage.portrait .scr-tab b{font-size:8cqw}
+.scr-stage.portrait .scr-tab span{font-size:3.4cqw}
+.scr-stage.portrait .scr-tab em{font-size:1.8cqw}
+.scr-stage.portrait .scr-pill{font-size:5.4cqw}
+.scr-stage.portrait .scr-it .leader{font-size:4.4cqw}
+.scr-stage.portrait .scr-it .nm-am{font-size:2.8cqw}
+.scr-stage.portrait .scr-it p{font-size:2.4cqw}
+.scr-stage.portrait .scr-side{min-height:40cqw}
+.scr-stage.portrait .scr-feature{width:44cqw}
+.scr-stage.portrait .scr-feature img{width:38cqw;height:38cqw}
+.scr-stage.portrait .scr-feature figcaption{font-size:3.4cqw}
+.scr-stage.portrait .scr-big{font-size:14cqw}
+.scr-stage.portrait .scr-band{height:8cqw;font-size:2.3cqw;flex-direction:column;justify-content:center;gap:1cqw}
+.scr-it .price s{opacity:.55;margin-right:.6cqw;font-size:.75em}
+.scr-promo{position:absolute;inset:0;display:grid;place-items:center;background:#000;animation:scr-zoom 12s ease-out both}
+.scr-promo img{width:100%;height:100%;object-fit:contain}
+@keyframes scr-zoom{from{transform:scale(1.06)}to{transform:scale(1)}}
+.scr-label{position:absolute;right:1.2cqw;top:1cqw;font:700 1cqw/1 'Barlow Condensed',sans-serif;letter-spacing:.2em;text-transform:uppercase;opacity:.5;z-index:3}
+.embed .scr-stage.portrait{width:auto;height:100%;margin:0 auto}

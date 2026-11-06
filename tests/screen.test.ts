@@ -3,10 +3,11 @@ import { buildSlides } from "../src/lib/screen";
 import type { CategoryDTO, ItemDTO } from "../src/lib/types";
 
 const item = (id: string, extra: Partial<ItemDTO> = {}): ItemDTO => ({
-  id, categoryId: "c", nameEn: id, nameAm: "", descEn: "", descAm: "", price: 10, fasting: false, soldOut: false, imageId: null, ...extra,
+  id, categoryId: "c", nameEn: id, nameAm: "", descEn: "", descAm: "", price: 10, fasting: false, soldOut: false, imageId: null,
+  libraryPhoto: null, photo: null, tags: [], variants: [], addons: [], hidden: false, special: null, popular: false, ...extra,
 });
 const cat = (id: string, n: number, extra: (i: number) => Partial<ItemDTO> = () => ({})): CategoryDTO => ({
-  id, nameEn: id, nameAm: "", items: Array.from({ length: n }, (_, i) => item(`${id}${i}`, extra(i))),
+  id, nameEn: id, nameAm: "", fromMin: null, toMin: null, showOnScreen: true, availableNow: true, items: Array.from({ length: n }, (_, i) => item(`${id}${i}`, extra(i))),
 });
 
 describe("buildSlides", () => {

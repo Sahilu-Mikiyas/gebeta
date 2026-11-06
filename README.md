@@ -1,74 +1,83 @@
 # Gebeta
 
-Digital menus, QR table stands and menu screens for cafes in Ethiopia.
+Digital menus, QR table stands, table ordering and menu screens for cafes in Ethiopia.
 
-Cafe owners sign up with their phone number, build a bilingual (English/Amharic) menu, pick a board style and print a QR code. Customers scan it and get the menu on their phone.
+## What's in it
 
-## What works today
+**For customers (`/m/<cafe>`)**
+- Menu in English or Amharic. The language follows the phone's setting.
+- Search, fasting filter and section shortcuts.
+- Item photos, sizes, extras and tags.
+- Specials with the old price crossed out.
+- On fasting days (Wednesday, Friday, Abiy Tsom, Advent, Filseta), fasting dishes are listed first.
+- Wi-Fi details and contact links.
+- From a table QR (`?t=7`):
+  - call a waiter or ask for the bill
+  - order from the phone and follow the order's status
+  - rate the visit
 
-- **Owner accounts:** sign up and log in with an Ethiopian mobile number (09… or 07…) and a password.
-- **Onboarding:** create a cafe, optionally starting from a sample Addis cafe menu.
-- **Menu editor** with a live phone preview:
-  - sections and items in English and Amharic, with descriptions and prices in birr
-  - fasting tags, and sold-out items that come back at 6:00 AM Addis time
-  - item photos (resized in the browser before upload)
-  - reordering and moving items between sections
-  - bulk price changes by percentage, rounded to 5 birr
-- **Design:** four board styles (Wood & Red, Mustard, Paper & Orange, Fasting Green).
-- **Public menu at `/m/<slug>`:** English/Amharic switch, fasting-only filter and section jump links. Pages are server-rendered.
-- **QR codes:** PNG (1200 px) and SVG downloads, and a printable A4 sheet of four table cards.
-- **Menu screens for TVs at `/s/<slug>`:** a full-screen 16:9 board that rotates through the menu one section at a time.
-  - long sections are split across boards
-  - shows the cafe's board style and item photos
-  - picks up price and sold-out changes within 30 seconds
-  - keeps the screen awake
-  - owners set seconds per board and the language (English, Amharic or both) in the Menu screen tab
-- **Stats:** scan counts for the last 7 days. Only visits from the QR code (`?src=qr`) are counted.
-- **Owner UI** in English and Amharic.
-- **Marketing page** at `/` (`public/landing.html`).
+**For owners (`/dashboard`)**
+- **Today:** setup checklist, today's numbers, one-tap sold-out switches, live orders and running specials.
+- **Orders & calls:** live board (New → Preparing → Served → Paid) with a chime, and a full-screen kitchen view.
+- **Menu:** bilingual items, photos (or built-in photos), sizes, add-ons, tags, hidden items, reordering, and bulk % price changes with undo.
+- **Specials & timing:** happy hours by day and time, breakfast/lunch serving windows per section, and scheduled price changes.
+- **Design:** four board styles, brand colours, logo and cover photo.
+- **Cafe info:** hours, phone, map, social links, Wi-Fi, tables, ordering and waiter-call switches, fasting mode, menu link.
+- **QR & print:** PNG/SVG downloads, table cards, one card per table, a two-column A4 paper menu and a window poster with Wi-Fi cards.
+- **Menu screen (`/s/<cafe>`):** TV board in landscape or portrait, with promo slides, section choice and language choice.
+- **Insights:** scans by day, hour and table; most-viewed dishes; best sellers; reviews; prices compared with the same area.
+- **History & undo:** every change from the dashboard and Telegram.
+- **Team:** invite links for managers (full editing) and staff (sold-out switches, orders and calls only).
+- **Branches:** extra cafes with a copied menu, and a switcher.
+- **Shop & plan:** order stands and screens, and pay for plans by Telebirr or CBE transfer, on delivery, or Chapa.
+- **Account:** connect Telegram, change password. Forgot password works by Telegram code or a support code.
+
+**For the platform (`/admin`)**
+- Approve plan payments, track stand orders and grant plans.
+- Connect the Telegram webhook.
+- Make support reset codes.
+
+**Telegram bot** (needs `TELEGRAM_BOT_TOKEN`)
+- Commands: `/menu`, `/price macchiato 100`, `/soldout chechebsa`, `/available`, `/stats`, `/reset`, `/cafe`.
+- Sends new orders, waiter calls, low ratings and a weekly summary to the owner and staff.
+
+## Plans
+
+| | Free | Cafe (590 birr/month) | Group (1,490 birr/month) |
+|---|---|---|---|
+| Items | 30 | unlimited | unlimited |
+| Table ordering | no | yes | yes |
+| Staff accounts | none | 5 | 25 |
+| Branches | 1 | 1 | 5 |
+
+Waiter calls, QR codes, printing and the menu screen work on every plan. On Free, a small Gebeta label shows on the menu and screen.
 
 ## Run it locally
 
 Requires Node 22 and Postgres.
 
 ```bash
-cp .env.example .env    # then fill in DATABASE_URL and SESSION_SECRET
+cp .env.example .env    # fill in DATABASE_URL and SESSION_SECRET
 npm install
-npx prisma migrate dev  # creates the tables
-npm run db:seed         # demo cafe: log in with 0911 00 00 00 / gebeta-demo
+npx prisma migrate dev
+npm run db:seed         # demo cafe: 0911 00 00 00 / gebeta-demo
 npm run dev
 ```
-
-Open http://localhost:3000. The demo menu is at http://localhost:3000/m/selam-buna-house.
 
 ## Checks
 
 ```bash
-npm test           # unit tests (phone numbers, slugs, prices, sold-out reset)
+npm test
 npm run typecheck
 npm run build
 ```
 
 ## Deploy
 
-`render.yaml` describes a Render web service plus a Postgres database. After the first deploy, set `APP_URL` to the public address. QR codes use that address, so set it before printing anything.
+`render.yaml` describes a Render web service plus Postgres. Database migrations run when the app starts. Set `APP_URL` before printing QR codes. The optional settings in `.env.example` switch on Telegram, admin, manual payment details and Chapa.
 
-## Code map
+## Known limits
 
-| Path | What it is |
-| --- | --- |
-| `prisma/schema.prisma` | Owners, cafes, sections, items, photos, scans |
-| `src/app/(app)/dashboard/actions.ts` | Every menu change: validation and ownership checks |
-| `src/app/(app)/dashboard/Editor.tsx` | The editor UI and live preview |
-| `src/components/MenuView.tsx` | The customer menu, shared by the public page and the preview |
-| `src/app/m/[slug]/` | Public menu page and QR code downloads |
-| `src/app/s/[slug]/` | TV menu screen and the data endpoint it polls |
-| `src/lib/screen.ts` | Splits a menu into TV boards |
-| `src/lib/i18n.ts` | All UI text in English and Amharic |
-
-## Known limits of this first version
-
-- Photos are stored in Postgres. Move them to object storage (for example Cloudflare R2) before there are many cafes.
-- Login rate limiting is kept in memory, so it only works with a single server instance.
-- There is no password reset yet. It needs SMS (for example AfroMessage).
-- Not built yet: stand ordering and payments (Telebirr, Chapa), the Telegram bot, and multiple cafes per owner.
+- Photos are stored in Postgres; move them to object storage when there are many cafes.
+- Paying at the table online would need each cafe's own Chapa account, so table orders are paid to the waiter (cash, Telebirr, CBE).
+- AI menu import from a photo and automatic translation need a paid AI API key, so they aren't built yet.

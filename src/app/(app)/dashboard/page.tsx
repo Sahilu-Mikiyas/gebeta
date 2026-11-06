@@ -1,48 +1,38 @@
-import { headers } from "next/headers";
 import { prisma } from "@/lib/db";
-import { requireOwner } from "@/lib/auth";
-import { getUiLang } from "@/lib/lang-server";
+import { requireCafe } from "@/lib/access";
 import { loadMenu } from "@/lib/menu-data";
-import { addisDayKey } from "@/lib/menu";
-import { DAY_NAMES } from "@/lib/i18n";
-import { Editor, type Stats } from "./Editor";
-import { Onboarding } from "./Onboarding";
+import { Today } from "./Today";
 
-export const metadata = { title: "Dashboard · Gebeta" };
+export const metadata = { title: "Today · Gebeta" };
 
-export default async function DashboardPage() {
-  const owner = await requireOwner();
-  const lang = await getUiLang();
-  const cafe = await prisma.cafe.findFirst({ where: { ownerId: owner.id }, orderBy: { createdAt: "asc" } });
-  if (!cafe) return <Onboarding lang={lang} ownerName={owner.name} />;
-
-  const menu = await loadMenu({ id: cafe.id });
-  if (!menu) throw new Error("Cafe disappeared");
-
-  // Scans for the last 7 days, bucketed by Addis Ababa calendar day.
+export default async function TodayPage() {
+  const { cafe, role, user } = await requireCafe();
+  const menu = (await loadMenu({ id: cafe.id }))!;
+  const day = 86_400_000;
   const now = Date.now();
-  const days = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(now - (6 - i) * 86_400_000);
-    const local = new Date(d.getTime() + 3 * 3_600_000);
-    return { key: addisDayKey(d), label: DAY_NAMES[lang][local.getUTCDay()], count: 0 };
-  });
-  const scans = await prisma.scan.findMany({
-    where: { cafeId: cafe.id, at: { gte: new Date(now - 8 * 86_400_000) } },
-    select: { at: true, lang: true },
-  });
-  let total = 0;
-  let amharic = 0;
-  for (const s of scans) {
-    const day = days.find((d) => d.key === addisDayKey(s.at));
-    if (!day) continue;
-    day.count++;
-    total++;
-    if (s.lang === "am") amharic++;
-  }
-  const stats: Stats = { days, total, amharicPct: total ? Math.round((amharic / total) * 100) : 0 };
-
-  const h = await headers();
-  const appUrl = process.env.APP_URL?.replace(/\/$/, "") || `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host")}`;
-
-  return <Editor initial={menu} stats={stats} appUrl={appUrl} lang={lang} />;
+  const [scansToday, scansYesterday, ordersToday, feedback, scansEver] = await Promise.all([
+    prisma.scan.count({ where: { cafeId: cafe.id, at: { gte: new Date(now - day) } } }),
+    prisma.scan.count({ where: { cafeId: cafe.id, at: { gte: new Date(now - 2 * day), lt: new Date(now - day) } } }),
+    prisma.order.findMany({ where: { cafeId: cafe.id, createdAt: { gte: new Date(now - day) }, status: { not: "cancelled" } }, select: { total: true } }),
+    prisma.feedback.aggregate({ where: { cafeId: cafe.id, createdAt: { gte: new Date(now - 30 * day) } }, _avg: { rating: true }, _count: true }),
+    prisma.scan.count({ where: { cafeId: cafe.id } }),
+  ]);
+  const items = menu.categories.flatMap((c) => c.items);
+  const checklist = [
+    { done: items.length >= 3, en: "Add your menu items", am: "ምግቦችዎን ይጨምሩ", href: "/dashboard/menu" },
+    { done: items.some((i) => i.photo), en: "Add photos to a few items", am: "ለጥቂት ምግቦች ፎቶ ይጨምሩ", href: "/dashboard/menu" },
+    { done: !!cafe.logoId, en: "Upload your logo", am: "አርማዎን ይጫኑ", href: "/dashboard/design" },
+    { done: !!(cafe.hoursEn || cafe.phone || cafe.wifiName), en: "Add hours, phone and Wi-Fi", am: "ሰዓት፣ ስልክና ዋይፋይ ይጨምሩ", href: "/dashboard/info" },
+    { done: scansEver > 0, en: "Print your QR and put it on a table", am: "QR ኮድዎን አትመው ጠረጴዛ ላይ ያድርጉ", href: "/dashboard/print" },
+    { done: !!user.telegramChatId, en: "Connect Telegram for alerts", am: "ለማሳወቂያ ቴሌግራምን ያገናኙ", href: "/dashboard/account" },
+  ];
+  return (
+    <Today
+      menu={menu}
+      role={role}
+      userName={user.name}
+      stats={{ scansToday, scansYesterday, orders: ordersToday.length, sales: ordersToday.reduce((s, o) => s + o.total, 0), rating: feedback._avg.rating, reviews: feedback._count }}
+      checklist={checklist}
+    />
+  );
 }

@@ -9,7 +9,7 @@ export function AuthForm({ mode, lang }: { mode: "login" | "signup"; lang: Lang 
   const [state, action, pending] = useActionState<AuthState, FormData>(mode === "login" ? login : signup, undefined);
   const isSignup = mode === "signup";
   return (
-    <div className="auth-card">
+    <div className="auth-card rise-in">
       <div className="auth-top">
         <Link className="brand" href="/" aria-label="Gebeta">
           <b>GEBETA</b>
@@ -22,7 +22,7 @@ export function AuthForm({ mode, lang }: { mode: "login" | "signup"; lang: Lang 
       <h1 className="title">{t(lang, isSignup ? "signupTitle" : "loginTitle")}</h1>
       <p>{t(lang, isSignup ? "signupSub" : "loginSub")}</p>
       {state?.error ? (
-        <p className="err" role="alert">
+        <p className="err shake" role="alert">
           {t(lang, state.error)}
         </p>
       ) : null}
@@ -41,7 +41,7 @@ export function AuthForm({ mode, lang }: { mode: "login" | "signup"; lang: Lang 
         <label className="f" htmlFor="password">
           {t(lang, "password")}
           <input className="inp" id="password" name="password" type="password" autoComplete={isSignup ? "new-password" : "current-password"} minLength={isSignup ? 8 : undefined} required />
-          {isSignup ? <small>{t(lang, "passwordHint")}</small> : null}
+          {isSignup ? <small>{t(lang, "passwordHint")}</small> : <small><Link href="/forgot">{lang === "am" ? "የይለፍ ቃልዎን ረሱ?" : "Forgot your password?"}</Link></small>}
         </label>
         <button className="btn red" type="submit" disabled={pending}>
           {t(lang, isSignup ? "signup" : "login")}

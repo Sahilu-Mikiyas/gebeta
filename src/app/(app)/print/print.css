@@ -1,0 +1,74 @@
+.print-page{background:#ddd;min-height:100vh;padding:20px var(--gr) 40px var(--gl)}
+.print-bar{max-width:210mm;margin:0 auto 16px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-weight:600}
+.sheet{width:210mm;max-width:100%;aspect-ratio:210/297;margin:0 auto;background:#fff;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.card{border:1px dashed #999;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:0 8% 6%;text-align:center;overflow:hidden}
+.card-tab{background:#d7261e;color:#fff;width:70%;border-radius:0 0 999px 999px;padding:8% 6% 9%;display:grid;gap:2px;border:3px solid #000;border-top:0}
+.card-tab b{font:400 clamp(14px,3.4vw,26px)/1.05 var(--poster);text-transform:uppercase;overflow-wrap:anywhere}
+.card-tab span{font:800 clamp(10px,2vw,15px)/1.2 'Noto Sans Ethiopic',sans-serif;color:#f5b700}
+.card-qr{width:62%;aspect-ratio:1}
+.card-qr svg{width:100%;height:100%;display:block}
+.card-scan{display:grid;gap:2px}
+.card-scan b{font:400 clamp(14px,3vw,24px)/1 var(--poster);text-transform:uppercase}
+.card-scan span{font:800 clamp(11px,2.2vw,17px)/1.2 'Noto Sans Ethiopic',sans-serif}
+.card-url{font:700 clamp(8px,1.5vw,11px)/1.2 var(--cond);letter-spacing:.04em;overflow-wrap:anywhere}
+.card-foot{font:600 clamp(7px,1.2vw,9px)/1 var(--cond);letter-spacing:.14em;text-transform:uppercase;color:#777}
+@media print{
+  @page{size:A4;margin:0}
+  .print-page{background:#fff;padding:0}
+  .print-bar{display:none}
+  .sheet{width:210mm;height:297mm;box-shadow:none;max-width:none}
+  .card-tab{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+.card-tab img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #fff;justify-self:center;margin-bottom:4px}
+.card-tab{background:var(--pill,#d7261e)}
+.card-table{font:400 clamp(14px,2.6vw,22px)/1 var(--poster);text-transform:uppercase;background:#0b0a0a;color:#f5b700;padding:6px 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.card-qr.small{width:38%}
+.sheet + .sheet{margin-top:20px}
+.wifi-card{justify-content:center;gap:6px;padding:8% 10%}
+.wf-title{font:400 clamp(18px,3.4vw,28px)/1 var(--poster);text-transform:uppercase}
+.wf-k{font:700 clamp(8px,1.4vw,11px)/1 var(--cond);letter-spacing:.14em;text-transform:uppercase;color:#777}
+.wf-v{font:800 clamp(14px,2.6vw,22px)/1.1 var(--cond)}
+.wf-v.mono{font-family:ui-monospace,Menlo,monospace}
+/* paper menu */
+.paper{width:210mm;max-width:100%;min-height:297mm;margin:0 auto;background:#fbf6ec;color:#1a1a1a;padding:12mm;box-shadow:0 2px 12px rgba(0,0,0,.2);display:flex;flex-direction:column;gap:8mm;--pill:#d7261e;--acc:#f5b700}
+.paper[data-t="green"]{--pill:#1f6b35}.paper[data-t="mustard"]{--pill:#0b0a0a}.paper[data-t="paper"]{--pill:#f26a1b}
+.paper-h{display:flex;gap:6mm;align-items:center;border-bottom:3px solid #000;padding-bottom:5mm}
+.paper-h img{width:22mm;height:22mm;border-radius:50%;object-fit:cover;border:2px solid #000}
+.paper-h h1{margin:0;font:400 34pt/1 var(--poster);text-transform:uppercase;color:var(--pill)}
+.paper-h h2{margin:2px 0 0;font:800 16pt/1.2 'Noto Sans Ethiopic',sans-serif}
+.paper-h p{margin:4px 0 0;font:600 10pt/1.3 var(--cond);letter-spacing:.06em;text-transform:uppercase;color:#555}
+.paper-cols{columns:2;column-gap:10mm;flex:1}
+.paper-sec{break-inside:avoid;margin-bottom:6mm}
+.paper-sec h3{display:inline-block;margin:0 0 3mm;background:var(--pill);color:#fff;font:400 13pt/1 var(--poster);text-transform:uppercase;padding:2mm 4mm;border-radius:99px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.paper-sec h3 span{font:800 10pt/1 'Noto Sans Ethiopic',sans-serif}
+.paper-it{margin-bottom:2.5mm;break-inside:avoid}
+.paper-it .leader{display:flex;align-items:baseline;gap:2mm;font:700 11pt/1.15 var(--cond);text-transform:uppercase}
+.paper-it .leader em{font:600 9pt/1 'Noto Sans Ethiopic',sans-serif;text-transform:none;color:#555;font-style:normal}
+.paper-it .dots{flex:1;border-bottom:1.5px dotted #000;transform:translateY(-1mm);min-width:5mm}
+.paper-it .ft{font:800 7pt/1 'Noto Sans Ethiopic',sans-serif;color:#1f6b35;border:1px solid #1f6b35;padding:0 3px}
+.paper-it p{margin:.6mm 0 0;font:500 8.5pt/1.3 var(--body);color:#555}
+.paper-it .sizes{font:700 7.5pt/1 var(--cond);text-transform:uppercase;letter-spacing:.04em}
+.paper-f{display:flex;gap:6mm;align-items:center;border-top:3px solid #000;padding-top:5mm}
+.paper-qr{width:28mm;height:28mm}
+.paper-qr svg{width:100%;height:100%}
+.paper-f div:last-child{display:grid;gap:1.5mm;font:600 9pt/1.3 var(--cond);text-transform:uppercase;letter-spacing:.04em}
+.paper-f b{font:400 13pt/1.1 var(--poster)}
+/* poster */
+.poster{width:210mm;max-width:100%;min-height:297mm;margin:0 auto 20px;background:var(--pill,#d7261e);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7mm;text-align:center;padding:14mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.poster[data-t="mustard"]{--pill:#f5b700;color:#0b0a0a}.poster[data-t="green"]{--pill:#1f6b35}.poster[data-t="wood"]{background:#1a1210 url(/menu-wood.webp) center/600px}
+.poster-tab{display:grid;gap:2mm;justify-items:center}
+.poster-tab img{width:24mm;height:24mm;border-radius:50%;object-fit:cover;border:3px solid currentColor}
+.poster-tab b{font:400 26pt/1 var(--poster);text-transform:uppercase}
+.poster-tab span{font:800 14pt/1 'Noto Sans Ethiopic',sans-serif}
+.poster h1{margin:0;font:400 64pt/.92 var(--poster);text-transform:uppercase}
+.poster h2{margin:0;font:800 26pt/1.2 'Noto Sans Ethiopic',sans-serif;color:#f5b700}
+.poster[data-t="mustard"] h2{color:#d7261e}
+.poster-qr{width:95mm;height:95mm;background:#fff;padding:4mm;border:4px solid #000}
+.poster-qr svg{width:100%;height:100%}
+.poster p{margin:0;font:600 13pt/1.4 var(--cond);max-width:150mm}
+.poster-wifi{background:#0b0a0a;color:#f5b700;padding:4mm 7mm;font:700 15pt/1.2 var(--cond);text-transform:uppercase}
+.poster-wifi code{background:#f5b700;color:#0b0a0a;padding:0 2mm}
+@media print{
+  .paper,.poster{box-shadow:none;width:210mm;min-height:297mm;max-width:none;margin:0;page-break-after:always}
+  .sheet{page-break-after:always}
+}

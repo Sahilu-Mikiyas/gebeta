@@ -14,7 +14,7 @@ export type Slide = {
 export function buildSlides(categories: CategoryDTO[], perSlide = 8): Slide[] {
   const slides: Slide[] = [];
   for (const c of categories) {
-    if (c.items.length === 0) continue;
+    if (c.items.length === 0 || c.showOnScreen === false || c.availableNow === false) continue;
     const pages = Math.ceil(c.items.length / perSlide);
     const size = Math.ceil(c.items.length / pages);
     for (let p = 0; p < pages; p++) {
@@ -25,7 +25,7 @@ export function buildSlides(categories: CategoryDTO[], perSlide = 8): Slide[] {
         items,
         page: p + 1,
         pages,
-        feature: items.find((i) => i.imageId && !i.soldOut) ?? null,
+        feature: items.find((i) => (i.photo ?? i.imageId) && !i.soldOut) ?? null,
       });
     }
   }

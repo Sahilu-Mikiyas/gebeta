@@ -8,14 +8,15 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
   if (!cafe) return new Response("Not found", { status: 404 });
 
   const sp = new URL(req.url).searchParams;
-  const url = menuUrl(appUrlFrom(req), cafe.slug);
+  const table = (sp.get("t") ?? "").replace(/[^0-9a-zA-Z-]/g, "").slice(0, 6);
+  const url = menuUrl(appUrlFrom(req), cafe.slug, table);
   const download = sp.get("download") === "1";
   const headers: Record<string, string> = { "Cache-Control": "private, max-age=300" };
 
   if (sp.get("format") === "png") {
-    if (download) headers["Content-Disposition"] = `attachment; filename="${cafe.slug}-qr.png"`;
+    if (download) headers["Content-Disposition"] = `attachment; filename="${cafe.slug}${table ? `-table-${table}` : ""}-qr.png"`;
     return new Response(new Uint8Array(await qrPng(url)), { headers: { ...headers, "Content-Type": "image/png" } });
   }
-  if (download) headers["Content-Disposition"] = `attachment; filename="${cafe.slug}-qr.svg"`;
+  if (download) headers["Content-Disposition"] = `attachment; filename="${cafe.slug}${table ? `-table-${table}` : ""}-qr.svg"`;
   return new Response(await qrSvg(url), { headers: { ...headers, "Content-Type": "image/svg+xml" } });
 }

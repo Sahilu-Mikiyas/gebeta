@@ -7,68 +7,118 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// A person with a login: cafe owners and their staff.
 model Owner {
-  id           String   @id @default(cuid())
-  phone        String   @unique // E.164, e.g. +251911234567
-  name         String
-  passwordHash String
-  createdAt    DateTime @default(now())
-  cafes        Cafe[]
+  id             String       @id @default(cuid())
+  phone          String       @unique // E.164, e.g. +251911234567
+  name           String
+  passwordHash   String
+  telegramChatId String?      @unique
+  createdAt      DateTime     @default(now())
+  cafes          Cafe[]
+  memberships    CafeMember[]
+  resetCodes     ResetCode[]
 }
 
 model Cafe {
-  id         String     @id @default(cuid())
-  ownerId    String
-  owner      Owner      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  slug       String     @unique
-  nameEn     String
-  nameAm     String     @default("")
-  area       String     @default("")
-  hoursEn    String     @default("")
-  hoursAm    String     @default("")
-  template   String     @default("wood")
-  logoId     String?
+  id             String        @id @default(cuid())
+  ownerId        String
+  owner          Owner         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  slug           String        @unique
+  nameEn         String
+  nameAm         String        @default("")
+  area           String        @default("")
+  hoursEn        String        @default("")
+  hoursAm        String        @default("")
+  template       String        @default("wood")
+  logoId         String?
+  coverId        String?
+  brandColor     String? // overrides the template's pill colour, e.g. #d7261e
+  accentColor    String?
+  // Contact block on the menu
+  phone          String        @default("")
+  mapUrl         String        @default("")
+  instagram      String        @default("")
+  tiktok         String        @default("")
+  telegram       String        @default("")
+  facebook       String        @default("")
+  wifiName       String        @default("")
+  wifiPass       String        @default("")
+  fastingMode    String        @default("auto") // auto | on | off
+  // Table service
+  tableCount     Int           @default(0)
+  orderingOn     Boolean       @default(false)
+  callsOn        Boolean       @default(true)
+  // Plan
+  plan           String        @default("free") // free | cafe | group
+  planUntil      DateTime?
   // Menu screen (TV) settings
-  screenSeconds Int    @default(10)
-  screenLang    String @default("both") // both | en | am
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  categories Category[]
-  items      Item[]
-  images     Image[]
-  scans      Scan[]
+  screenSeconds  Int           @default(10)
+  screenLang     String        @default("both") // both | en | am
+  screenPortrait Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  categories     Category[]
+  items          Item[]
+  images         Image[]
+  scans          Scan[]
+  members        CafeMember[]
+  invites        Invite[]
+  orders         Order[]
+  calls          ServiceCall[]
+  specials       Special[]
+  priceChanges   PriceChange[]
+  itemViews      ItemView[]
+  feedback       Feedback[]
+  changes        ChangeLog[]
+  slides         ScreenSlide[]
+  shopOrders     ShopOrder[]
+  planPayments   PlanPayment[]
 
   @@index([ownerId])
 }
 
 model Category {
-  id       String @id @default(cuid())
-  cafeId   String
-  cafe     Cafe   @relation(fields: [cafeId], references: [id], onDelete: Cascade)
-  nameEn   String
-  nameAm   String @default("")
-  position Int
-  items    Item[]
+  id           String  @id @default(cuid())
+  cafeId       String
+  cafe         Cafe    @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  nameEn       String
+  nameAm       String  @default("")
+  position     Int
+  // Time window in minutes after midnight (Addis time). Null = all day.
+  fromMin      Int?
+  toMin        Int?
+  showOnScreen Boolean @default(true)
+  items        Item[]
 
   @@index([cafeId, position])
 }
 
 model Item {
-  id           String    @id @default(cuid())
+  id           String     @id @default(cuid())
   cafeId       String
-  cafe         Cafe      @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  cafe         Cafe       @relation(fields: [cafeId], references: [id], onDelete: Cascade)
   categoryId   String
-  category     Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category     Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   nameEn       String
-  nameAm       String    @default("")
-  descEn       String    @default("")
-  descAm       String    @default("")
+  nameAm       String     @default("")
+  descEn       String     @default("")
+  descAm       String     @default("")
   price        Int // whole birr
-  fasting      Boolean   @default(false)
+  fasting      Boolean    @default(false)
+  tags         String[]   @default([]) // spicy | vegan | new | chef
+  // [{ nameEn, nameAm, price }] — sizes such as single / double. When present, the first is the default.
+  variants     Json       @default("[]")
+  // [{ nameEn, nameAm, price }] — extras such as an extra shot
+  addons       Json       @default("[]")
+  hidden       Boolean    @default(false)
   // Sold out until this moment (next 6:00 AM Addis time). Null means available.
   soldOutUntil DateTime?
   imageId      String?
+  libraryPhoto String? // key of a built-in photo when the owner has none
   position     Int
+  specials     Special[]
+  views        ItemView[]
 
   @@index([categoryId, position])
 }
@@ -91,6 +141,211 @@ model Scan {
   cafe   Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
   at     DateTime @default(now())
   lang   String
+  table  String   @default("")
 
   @@index([cafeId, at])
+}
+
+// ---------- accounts ----------
+
+model CafeMember {
+  id        String   @id @default(cuid())
+  cafeId    String
+  cafe      Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  userId    String
+  user      Owner    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String // manager | staff
+  createdAt DateTime @default(now())
+
+  @@unique([cafeId, userId])
+}
+
+model Invite {
+  id         String    @id @default(cuid())
+  cafeId     String
+  cafe       Cafe      @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  token      String    @unique
+  role       String
+  createdAt  DateTime  @default(now())
+  acceptedAt DateTime?
+}
+
+model LoginAttempt {
+  key     String   @id
+  count   Int
+  resetAt DateTime
+}
+
+model ResetCode {
+  id        String    @id @default(cuid())
+  ownerId   String
+  owner     Owner     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  codeHash  String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([ownerId])
+}
+
+// A one-time code a user sends to the Telegram bot to link their chat.
+model TelegramLink {
+  code      String   @id
+  ownerId   String
+  expiresAt DateTime
+}
+
+// ---------- table service ----------
+
+model Order {
+  id        String      @id @default(cuid())
+  cafeId    String
+  cafe      Cafe        @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  number    Int // short number shown to staff, counts up per cafe
+  table     String
+  status    String      @default("new") // new | preparing | served | paid | cancelled
+  note      String      @default("")
+  total     Int
+  payMethod String? // cash | telebirr | cbe | chapa
+  payRef    String?
+  paidAt    DateTime?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  lines     OrderLine[]
+
+  @@index([cafeId, createdAt])
+}
+
+model OrderLine {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemId    String?
+  name      String
+  variant   String  @default("")
+  addons    String  @default("")
+  qty       Int
+  unitPrice Int
+  lineTotal Int
+}
+
+model ServiceCall {
+  id        String    @id @default(cuid())
+  cafeId    String
+  cafe      Cafe      @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  table     String
+  kind      String // waiter | bill
+  createdAt DateTime  @default(now())
+  doneAt    DateTime?
+
+  @@index([cafeId, createdAt])
+}
+
+// ---------- menu extras ----------
+
+// A time-limited price, e.g. Tibs Tuesday 12:00–15:00 at 390 birr.
+model Special {
+  id      String  @id @default(cuid())
+  cafeId  String
+  cafe    Cafe    @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  itemId  String
+  item    Item    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  price   Int
+  days    Int     @default(127) // bitmask, bit 0 = Sunday
+  fromMin Int     @default(0)
+  toMin   Int     @default(1440)
+  labelEn String  @default("")
+  labelAm String  @default("")
+  active  Boolean @default(true)
+}
+
+// A price change that takes effect later. Applied when the menu is next loaded after effectiveAt.
+model PriceChange {
+  id          String    @id @default(cuid())
+  cafeId      String
+  cafe        Cafe      @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  categoryId  String? // null = whole menu
+  percent     Int
+  effectiveAt DateTime
+  appliedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([cafeId, appliedAt])
+}
+
+model ItemView {
+  id     String   @id @default(cuid())
+  cafeId String
+  cafe   Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  itemId String
+  item   Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  at     DateTime @default(now())
+
+  @@index([cafeId, at])
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  cafeId    String
+  cafe      Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  rating    Int
+  comment   String   @default("")
+  table     String   @default("")
+  createdAt DateTime @default(now())
+
+  @@index([cafeId, createdAt])
+}
+
+// History of owner edits, with enough data to undo them.
+model ChangeLog {
+  id        String    @id @default(cuid())
+  cafeId    String
+  cafe      Cafe      @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  userName  String
+  action    String
+  summary   String
+  undo      Json? // what to write back to undo, see lib/history.ts
+  createdAt DateTime  @default(now())
+  undoneAt  DateTime?
+
+  @@index([cafeId, createdAt])
+}
+
+model ScreenSlide {
+  id       String @id @default(cuid())
+  cafeId   String
+  cafe     Cafe   @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  imageId  String
+  position Int
+}
+
+// ---------- shop and plans ----------
+
+model ShopOrder {
+  id        String   @id @default(cuid())
+  cafeId    String
+  cafe      Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  kind      String // acrylic | wood | led | tv
+  qty       Int
+  ledColor  String   @default("")
+  total     Int
+  address   String
+  phone     String
+  payMethod String // telebirr | cbe | delivery | chapa
+  payRef    String   @default("")
+  status    String   @default("pending") // pending | paid | making | delivered | cancelled
+  createdAt DateTime @default(now())
+}
+
+model PlanPayment {
+  id        String   @id @default(cuid())
+  cafeId    String
+  cafe      Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  plan      String
+  months    Int
+  amount    Int
+  payMethod String
+  payRef    String   @default("")
+  status    String   @default("pending") // pending | paid | rejected
+  createdAt DateTime @default(now())
 }

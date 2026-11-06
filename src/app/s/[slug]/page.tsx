@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function ScreenPage({ params, searchParams }: Params) {
   const { slug } = await params;
   const sp = await searchParams;
-  const menu = await loadMenu({ slug });
+  const menu = await loadMenu({ slug }, { publicView: true });
   if (!menu) notFound();
   return (
     <>

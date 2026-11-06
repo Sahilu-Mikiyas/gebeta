@@ -1,18 +1,21 @@
-// Simple in-memory limiter for login attempts. Good enough for a single server;
-// move to Redis or Postgres when running more than one instance.
-const hits = new Map<string, { count: number; resetAt: number }>();
+import { prisma } from "./db";
 
-export function tooManyAttempts(key: string, limit = 8, windowMs = 15 * 60_000): boolean {
-  const now = Date.now();
-  const h = hits.get(key);
-  if (!h || h.resetAt < now) {
-    hits.set(key, { count: 1, resetAt: now + windowMs });
+// Counts attempts per key in Postgres so the limit holds across restarts and servers.
+export async function tooManyAttempts(key: string, limit = 8, windowMs = 15 * 60_000): Promise<boolean> {
+  const now = new Date();
+  const row = await prisma.loginAttempt.findUnique({ where: { key } });
+  if (!row || row.resetAt < now) {
+    await prisma.loginAttempt.upsert({
+      where: { key },
+      create: { key, count: 1, resetAt: new Date(now.getTime() + windowMs) },
+      update: { count: 1, resetAt: new Date(now.getTime() + windowMs) },
+    });
     return false;
   }
-  h.count++;
-  return h.count > limit;
+  const updated = await prisma.loginAttempt.update({ where: { key }, data: { count: { increment: 1 } } });
+  return updated.count > limit;
 }
 
-export function clearAttempts(key: string) {
-  hits.delete(key);
+export async function clearAttempts(key: string) {
+  await prisma.loginAttempt.deleteMany({ where: { key } });
 }
